@@ -85,6 +85,266 @@
   .ok{color:#22c55e}.warn{color:#f59e0b}.danger{color:#ef4444}
   .counter{font-size:12px}
 </style>
+  <!-- ======= BEGIN: Essay Questions Tab (drop this near the end of <body>, before </body>) ======= -->
+<style>
+  /* Tabs */
+  .tabs{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 14px}
+  .tab{
+    background:#121a2d;border:1px solid #22304c;color:#dfe7ff;
+    padding:9px 12px;border-radius:10px;cursor:pointer;user-select:none
+  }
+  .tab.active{background:linear-gradient(135deg,#24335b,#1a2748);border-color:#355296}
+  /* Panels */
+  .panel{background:#0f1422;border:1px solid #22304c;border-radius:14px;padding:12px}
+  /* Essay panel layout */
+  #essay-panel .row{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+  #essay-panel .row > *{flex:1 1 160px}
+  #essay-panel input[type="text"], #essay-panel input[type="number"], #essay-panel input[type="date"], #essay-panel select, #essay-panel textarea{
+    background:#121a2d;border:1px solid #22304c;color:#eaf0ff;padding:10px 12px;border-radius:8px;outline:none;font-size:14px
+  }
+  #essay-panel textarea{min-height:110px;resize:vertical}
+  #essay-panel .btn{background:#121a2d;border:1px solid #22304c;color:#eaf0ff;padding:10px 12px;border-radius:8px;cursor:pointer}
+  #essay-panel .btn:hover{background:#162041}
+  #essay-panel .card{background:#101730;border:1px solid #22304c;border-radius:12px;padding:12px;margin:10px 0}
+  #essay-panel .card h4{margin:0 0 6px 0}
+  #essay-panel .small{font-size:12px;color:#9fb0d1}
+  #essay-panel .tag{display:inline-block;padding:3px 8px;border:1px solid #22304c;border-radius:999px;background:#151c2c;font-size:12px;color:#cfe0ff;margin-right:6px}
+  /* Hide/Show CRM vs Essay via body class */
+  body.mode-essay .crm-only{display:none !important}
+  #essay-panel{display:none}
+  body.mode-essay #essay-panel{display:block}
+</style>
+
+<!-- Tabs header (auto-injected if not present) -->
+<div id="app-tabs" class="tabs crm-only">
+  <div class="tab active" data-tab="crm">School CRM</div>
+  <div class="tab" data-tab="essay">Essay Questions</div>
+</div>
+
+<!-- Essay Questions Panel -->
+<section id="essay-panel" class="panel">
+  <div class="row">
+    <select id="eq-school"></select>
+    <select id="eq-type">
+      <option value="Required essay">Required essay</option>
+      <option value="Optional essay">Optional essay</option>
+      <option value="Short answer">Short answer</option>
+      <option value="Video/Kira prompt">Video/Kira prompt</option>
+      <option value="Scholarship essay">Scholarship essay</option>
+    </select>
+    <input id="eq-wordlimit" type="number" min="0" placeholder="Word limit (e.g., 500)">
+    <input id="eq-deadline" type="date" placeholder="Deadline">
+  </div>
+  <div class="row">
+    <input id="eq-theme" type="text" placeholder="Theme (e.g., goals, why school, leadership)">
+    <input id="eq-notes" type="text" placeholder="Notes (how it fits your story)">
+  </div>
+  <div class="row">
+    <textarea id="eq-question" placeholder="Paste the exact essay question here"></textarea>
+  </div>
+  <div class="row">
+    <button class="btn" id="eq-add">Add Question</button>
+    <button class="btn" id="eq-export">Export JSON</button>
+    <label class="btn">Import JSON
+      <input id="eq-import" type="file" accept="application/json" style="display:none">
+    </label>
+    <button class="btn" id="eq-clear">Clear All</button>
+  </div>
+
+  <div id="eq-list"></div>
+  <p class="small">All entries save locally (localStorage). Use Export/Import as backup.</p>
+</section>
+
+<script>
+/* ========= BASIC TAB SWITCH: toggles body.classList to hide CRM + show Essay ========= */
+(function(){
+  const tabs = document.getElementById('app-tabs');
+  const ensureCRMTagged = () => {
+    // Tag obvious CRM elements so we can hide them in essay mode without you editing existing HTML
+    const sel = [
+      'h1', '.meta', '.toolbar', 'table', 'p.small'
+    ];
+    sel.forEach(s => document.querySelectorAll(s).forEach(el => el.classList.add('crm-only')));
+  };
+  ensureCRMTagged();
+
+  function activate(mode){
+    // mode: 'crm' or 'essay'
+    document.body.classList.toggle('mode-essay', mode==='essay');
+    tabs.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    tabs.querySelector(`[data-tab="${mode}"]`).classList.add('active');
+  }
+
+  tabs.addEventListener('click', (e)=>{
+    const t = e.target.closest('.tab'); if(!t) return;
+    const mode = t.dataset.tab === 'essay' ? 'essay' : 'crm';
+    activate(mode);
+  });
+
+  // ======= ESSAY QUESTIONS: state, render, persistence =======
+  const KEY_EQ = 'essay_questions_v1';
+
+  function readCRMNames(){
+    // Get school names from first column of your existing table
+    const rows = [...document.querySelectorAll('table tbody tr')];
+    return rows.map(r => (r.children[0]?.innerText||'').trim()).filter(Boolean);
+  }
+
+  function populateSchoolSelect(){
+    const sel = document.getElementById('eq-school');
+    const names = readCRMNames();
+    sel.innerHTML = names.map(n => `<option>${n}</option>`).join('');
+  }
+
+  function loadEQ(){
+    try{ return JSON.parse(localStorage.getItem(KEY_EQ) || '[]'); }catch(e){ return []; }
+  }
+  function saveEQ(arr){
+    localStorage.setItem(KEY_EQ, JSON.stringify(arr));
+  }
+
+  function groupBySchool(items){
+    const map = {};
+    for(const it of items){
+      (map[it.school] = map[it.school] || []).push(it);
+    }
+    return map;
+  }
+
+  function renderEQ(){
+    const list = document.getElementById('eq-list');
+    const data = loadEQ();
+    if(!data.length){ list.innerHTML = '<div class="card"><div class="small">No questions yet. Add one above.</div></div>'; return; }
+    const bySchool = groupBySchool(data);
+    const blocks = Object.keys(bySchool).sort().map(school=>{
+      const items = bySchool[school].map((it, idx)=>{
+        const tags = [
+          it.type ? `<span class="tag">${it.type}</span>`:'',
+          it.wordlimit ? `<span class="tag">${it.wordlimit} words</span>`:'',
+          it.deadline ? `<span class="tag">Due: ${it.deadline}</span>`:'',
+          it.theme ? `<span class="tag">Theme: ${it.theme}</span>`:''
+        ].join(' ');
+        return `
+          <div class="card" data-id="${it.id}">
+            <h4>${school}</h4>
+            <div class="small">${tags}</div>
+            <div class="small" style="margin:6px 0">${it.notes ? ('Notes: '+it.notes) : ''}</div>
+            <div style="white-space:pre-wrap">${it.question}</div>
+            <div class="row" style="margin-top:8px">
+              <button class="btn" data-edit="1">Edit</button>
+              <button class="btn" data-del="1">Delete</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+      return items;
+    }).join('');
+    list.innerHTML = blocks;
+
+    // bind edit/delete
+    list.querySelectorAll('.card').forEach(card=>{
+      const id = card.getAttribute('data-id');
+      const btnDel = card.querySelector('[data-del]');
+      const btnEd = card.querySelector('[data-edit]');
+      btnDel.addEventListener('click', ()=>{
+        const arr = loadEQ().filter(x => String(x.id) !== String(id));
+        saveEQ(arr); renderEQ();
+      });
+      btnEd.addEventListener('click', ()=>{
+        // load entry into form
+        const it = loadEQ().find(x => String(x.id)===String(id));
+        if(!it) return;
+        document.getElementById('eq-school').value = it.school;
+        document.getElementById('eq-type').value = it.type || 'Required essay';
+        document.getElementById('eq-wordlimit').value = it.wordlimit || '';
+        document.getElementById('eq-deadline').value = it.deadline || '';
+        document.getElementById('eq-theme').value = it.theme || '';
+        document.getElementById('eq-notes').value = it.notes || '';
+        document.getElementById('eq-question').value = it.question || '';
+        // replace existing on next add
+        document.getElementById('eq-add').dataset.editingId = it.id;
+        // switch to essay tab if not active
+        document.body.classList.add('mode-essay');
+        document.querySelector('#app-tabs .tab[data-tab="essay"]').classList.add('active');
+        document.querySelector('#app-tabs .tab[data-tab="crm"]').classList.remove('active');
+        document.getElementById('eq-question').focus();
+      });
+    });
+  }
+
+  function addOrUpdateEQ(){
+    const school = document.getElementById('eq-school').value.trim();
+    const type = document.getElementById('eq-type').value.trim();
+    const wordlimit = document.getElementById('eq-wordlimit').value.trim();
+    const deadline = document.getElementById('eq-deadline').value.trim();
+    const theme = document.getElementById('eq-theme').value.trim();
+    const notes = document.getElementById('eq-notes').value.trim();
+    const question = document.getElementById('eq-question').value.trim();
+    if(!school || !question){ alert('Please select a school and paste the question.'); return; }
+
+    const arr = loadEQ();
+    const editingId = document.getElementById('eq-add').dataset.editingId;
+
+    if(editingId){
+      const ix = arr.findIndex(x => String(x.id)===String(editingId));
+      if(ix>=0){
+        arr[ix] = { ...arr[ix], school, type, wordlimit, deadline, theme, notes, question };
+      }
+      delete document.getElementById('eq-add').dataset.editingId;
+    }else{
+      const id = Date.now();
+      arr.push({ id, school, type, wordlimit, deadline, theme, notes, question });
+    }
+
+    saveEQ(arr);
+    // clear form (except school)
+    document.getElementById('eq-type').value = 'Required essay';
+    document.getElementById('eq-wordlimit').value = '';
+    document.getElementById('eq-deadline').value = '';
+    document.getElementById('eq-theme').value = '';
+    document.getElementById('eq-notes').value = '';
+    document.getElementById('eq-question').value = '';
+
+    renderEQ();
+  }
+
+  // export/import/clear
+  function exportEQ(){
+    const arr = loadEQ();
+    const blob = new Blob([JSON.stringify(arr, null, 2)], {type:'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href=url; a.download='EssayQuestions.json'; a.click();
+    URL.revokeObjectURL(url);
+  }
+  function importEQ(file){
+    const reader = new FileReader();
+    reader.onload = ()=>{
+      try{
+        const data = JSON.parse(reader.result);
+        if(Array.isArray(data)){ saveEQ(data); renderEQ(); }
+        else alert('Invalid JSON');
+      }catch(e){ alert('Invalid JSON'); }
+    };
+    reader.readAsText(file);
+  }
+
+  // init
+  populateSchoolSelect();
+  renderEQ();
+
+  document.getElementById('eq-add').addEventListener('click', addOrUpdateEQ);
+  document.getElementById('eq-export').addEventListener('click', exportEQ);
+  document.getElementById('eq-import').addEventListener('change', e => { if(e.target.files[0]) importEQ(e.target.files[0]); });
+  document.getElementById('eq-clear').addEventListener('click', ()=>{
+    if(confirm('Clear all saved essay questions?')){ localStorage.removeItem(KEY_EQ); renderEQ(); }
+  });
+
+  // Optional: keyboard shortcut to jump to Essay tab
+  document.addEventListener('keydown', (e)=>{
+    if(e.key.toLowerCase()==='e' && (e.ctrlKey || e.metaKey)){ e.preventDefault(); activate('essay'); }
+  });
+})();
+</script>
 </head>
 <body>
 
