@@ -2,32 +2,22 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>MBA CRM + Elective Planner</title>
+<title>MBA CRM + Elective Planner + Essay Questions</title>
 
-<!-- Inter font for a clean, Apple-ish vibe -->
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
   :root{
-    --bg:#0b0e16;
-    --panel:#0f1422;
-    --elev:#121a2d;
-    --muted:#9fb0d1;
-    --text:#eaf0ff;
-    --border:#22304c;
-    --chip:#151c2c;
-    --dream: rgba(255,127,150,.12);
-    --target: rgba(255,214,102,.12);
-    --safety: rgba(119,255,170,.12);
-    --uswild: rgba(124,155,255,.12);
-    --accent:#7c9bff;
+    --bg:#0b0e16; --panel:#0f1422; --elev:#121a2d; --muted:#9fb0d1; --text:#eaf0ff;
+    --border:#22304c; --chip:#151c2c; --accent:#7c9bff;
+    --dream: rgba(255,127,150,.12); --target: rgba(255,214,102,.12);
+    --safety: rgba(119,255,170,.12); --uswild: rgba(124,155,255,.12);
   }
   *{box-sizing:border-box}
   html,body{height:100%}
   body{
-    margin:18px;
-    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    margin:18px; font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
     color:var(--text);
     background:
       radial-gradient(900px 600px at 10% -10%, #0f1a33 0%, rgba(15,26,51,0) 60%),
@@ -35,32 +25,24 @@
   }
   h1{margin:0 0 4px 0}
   .meta{color:var(--muted);margin:6px 0 14px}
-  /* Tabs */
   .tabs{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 14px}
-  .tab{
-    background:var(--chip); border:1px solid var(--border); color:#dfe7ff;
-    padding:9px 12px;border-radius:10px; cursor:pointer; user-select:none;
-  }
-  .tab.active{background:linear-gradient(135deg,#24335b,#1a2748); border-color:#355296}
-  /* Panels */
+  .tab{background:#121a2d;border:1px solid var(--border);color:#dfe7ff;padding:9px 12px;border-radius:10px;cursor:pointer;user-select:none}
+  .tab.active{background:linear-gradient(135deg,#24335b,#1a2748);border-color:#355296}
   .panel{background:var(--panel); border:1px solid var(--border); border-radius:14px; padding:12px}
-  /* CRM table */
   .toolbar{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0 14px}
-  input[type=search], .btn, select{
+  input[type=search], .btn, select, input[type=text], input[type=number], input[type=date], textarea{
     background:#121a2d;border:1px solid var(--border);color:var(--text);
     padding:8px 10px;border-radius:8px;outline:none;font-size:14px
   }
   .btn{cursor:pointer}
   .btn:hover{background:#162041}
   .table-wrap{overflow:auto;border:1px solid var(--border);border-radius:14px}
-  table{border-collapse:collapse; width:100%; min-width:950px; background:#0f1422}
+  table{border-collapse:collapse; width:100%; min-width:980px; background:#0f1422}
   th,td{border-bottom:1px solid var(--border); padding:10px 12px; text-align:left; font-size:14px; vertical-align:top}
   th{background:#121a2d;color:#cfe0ff; position:sticky; top:0; z-index:2}
   tr:hover td{background:rgba(124,155,255,.08)}
-  .Dream td{background:var(--dream)}
-  .Target td{background:var(--target)}
-  .Safety td{background:var(--safety)}
-  .USWildcard td{background:var(--uswild)}
+  .Dream td{background:var(--dream)} .Target td{background:var(--target)}
+  .Safety td{background:var(--safety)} .USWildcard td{background:var(--uswild)}
   td[contenteditable=true]{outline:none;border-radius:6px}
   td[contenteditable=true]:focus{box-shadow:0 0 0 2px #5167ff77 inset;background:rgba(81,103,255,.08)}
   .pill{display:inline-block;padding:4px 8px;border:1px solid var(--border);border-radius:999px;background:var(--chip);font-size:12px;color:#cfe0ff}
@@ -69,7 +51,7 @@
   /* Planner */
   .planner-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
   @media (max-width: 900px){ .planner-grid{grid-template-columns:1fr} }
-  .card{background:#101730;border:1px solid var(--border);border-radius:14px;padding:12px}
+  .card{background:#101730;border:1px solid var(--border);border-radius:12px;padding:12px;margin:10px 0}
   .card h3{margin:0 0 8px 0}
   .row{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
   .row > *{flex:1 1 160px}
@@ -84,45 +66,98 @@
   .actions{display:flex;gap:8px;flex-wrap:wrap}
   .ok{color:#22c55e}.warn{color:#f59e0b}.danger{color:#ef4444}
   .counter{font-size:12px}
-</style>
-  <!-- ======= BEGIN: Essay Questions Tab (drop this near the end of <body>, before </body>) ======= -->
-<style>
-  /* Tabs */
-  .tabs{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 14px}
-  .tab{
-    background:#121a2d;border:1px solid #22304c;color:#dfe7ff;
-    padding:9px 12px;border-radius:10px;cursor:pointer;user-select:none
-  }
-  .tab.active{background:linear-gradient(135deg,#24335b,#1a2748);border-color:#355296}
-  /* Panels */
-  .panel{background:#0f1422;border:1px solid #22304c;border-radius:14px;padding:12px}
-  /* Essay panel layout */
-  #essay-panel .row{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
-  #essay-panel .row > *{flex:1 1 160px}
-  #essay-panel input[type="text"], #essay-panel input[type="number"], #essay-panel input[type="date"], #essay-panel select, #essay-panel textarea{
-    background:#121a2d;border:1px solid #22304c;color:#eaf0ff;padding:10px 12px;border-radius:8px;outline:none;font-size:14px
-  }
-  #essay-panel textarea{min-height:110px;resize:vertical}
-  #essay-panel .btn{background:#121a2d;border:1px solid #22304c;color:#eaf0ff;padding:10px 12px;border-radius:8px;cursor:pointer}
-  #essay-panel .btn:hover{background:#162041}
-  #essay-panel .card{background:#101730;border:1px solid #22304c;border-radius:12px;padding:12px;margin:10px 0}
-  #essay-panel .card h4{margin:0 0 6px 0}
-  #essay-panel .small{font-size:12px;color:#9fb0d1}
-  #essay-panel .tag{display:inline-block;padding:3px 8px;border:1px solid #22304c;border-radius:999px;background:#151c2c;font-size:12px;color:#cfe0ff;margin-right:6px}
-  /* Hide/Show CRM vs Essay via body class */
-  body.mode-essay .crm-only{display:none !important}
-  #essay-panel{display:none}
-  body.mode-essay #essay-panel{display:block}
-</style>
 
-<!-- Tabs header (auto-injected if not present) -->
-<div id="app-tabs" class="tabs crm-only">
+  /* Essay */
+  #essay-panel textarea{min-height:110px;resize:vertical}
+  #essay-panel .tag{display:inline-block;padding:3px 8px;border:1px solid var(--border);border-radius:999px;background:#151c2c;font-size:12px;color:#cfe0ff;margin-right:6px}
+</style>
+</head>
+<body>
+
+<h1>MBA CRM + Elective Planner + Essay Questions</h1>
+<div class="meta">Generated 2025-08-12 • Full-time MBAs • All data saved locally (localStorage).</div>
+
+<div id="app-tabs" class="tabs">
   <div class="tab active" data-tab="crm">School CRM</div>
+  <div class="tab" data-tab="planner">Elective Planner</div>
   <div class="tab" data-tab="essay">Essay Questions</div>
 </div>
 
-<!-- Essay Questions Panel -->
-<section id="essay-panel" class="panel">
+<!-- CRM -->
+<section id="crm" class="panel">
+  <div class="toolbar">
+    <input id="q" type="search" placeholder="Search… (school, country, notes)">
+    <select id="filter-country">
+      <option value="">All countries</option>
+      <option>Spain</option><option>Italy</option><option>Netherlands</option><option>Germany</option>
+      <option>United Kingdom</option><option>France</option><option>Sweden</option><option>United States</option>
+    </select>
+    <select id="filter-category">
+      <option value="">All categories</option>
+      <option>Dream</option><option>Target</option><option>Safety</option><option>US Wildcard</option>
+    </select>
+    <button id="export" class="btn">Export CSV</button>
+  </div>
+
+  <div class="table-wrap">
+    <table id="crm-table">
+      <thead>
+        <tr>
+          <th>School Name</th><th>Country</th><th>Category</th><th>Duration</th>
+          <th>Average / Median GMAT</th><th>Application Deadlines (2025–26 cycle)</th><th>Notes</th>
+          <th>Max Electives (per program)</th>
+          <th>Electives (leave blank)</th><th>Alumni You Can Contact (leave blank)</th><th>LinkedIn Contact from AdComms</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class='Dream'><td contenteditable="true">IESE Business School</td><td><span class="pill">Spain</span></td><td contenteditable="true">Dream</td><td contenteditable="true">15 or 19 months</td><td contenteditable="true">No official average; GMAT acceptance range 545–715 (Focus) / 580–750 (Classic)</td><td contenteditable="true">R1: 25 Sep 2025 • R2: 9 Jan 2026 • R3: 12 Mar 2026 • R4*: 8 May 2026</td><td contenteditable="true">*R4 typically for EU passport holders or visa-exempt; check IESE site</td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td></tr>
+        <tr class='Dream'><td contenteditable="true">University of Oxford – Saïd</td><td><span class="pill">United Kingdom</span></td><td contenteditable="true">Dream</td><td contenteditable="true">12 months</td><td contenteditable="true">Median GMAT: 680</td><td contenteditable="true">Stage 1: 1 Sep 2025 • Stage 2: 1 Oct 2025 • Stage 3: 3 Nov 2025 • Stage 4: 7 Jan 2026 • Stage 5: 16 Mar 2026</td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td></tr>
+        <tr class='Dream'><td contenteditable="true">University of Cambridge – Judge</td><td><span class="pill">United Kingdom</span></td><td contenteditable="true">Dream</td><td contenteditable="true">12 months</td><td contenteditable="true">Average GMAT: 697</td><td contenteditable="true">R2: 6 Oct 2025 • R3: 5 Jan 2026 • R4: 30 Mar 2026 • R5: 5 May 2026</td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td></tr>
+        <tr class='Target'><td contenteditable="true">IE Business School</td><td><span class="pill">Spain</span></td><td contenteditable="true">Target</td><td contenteditable="true">11–15 months</td><td contenteditable="true">Average GMAT: ~680</td><td contenteditable="true">Rolling admissions (examples: final day for Sep 2025 start—1 Sep 2025; Jan 2026 start—30 Dec 2025)</td><td contenteditable="true">Apply early for scholarships; seats fill on a rolling basis</td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td></tr>
+        <tr class='Target'><td contenteditable="true">SDA Bocconi</td><td><span class="pill">Italy</span></td><td contenteditable="true">Target</td><td contenteditable="true">12 months</td><td contenteditable="true">Average GMAT: ~650–665</td><td contenteditable="true">R1: 4 Nov 2025 • R2: 13 Jan 2026 • R3: 3 Mar 2026 • R4: 15 Apr 2026</td><td contenteditable="true">Application deadline for 2026 intake: 15 Apr 2026</td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td></tr>
+        <tr class='Target'><td contenteditable="true">Rotterdam School of Management (RSM)</td><td><span class="pill">Netherlands</span></td><td contenteditable="true">Target</td><td contenteditable="true">12 months</td><td contenteditable="true">Average GMAT: ~640</td><td contenteditable="true">Jan 2026 intake rounds: 11 Feb • 8 Apr • 3 Jun • 12 Aug • 1 Oct • 4 Nov 2025</td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td></tr>
+        <tr class='Target'><td contenteditable="true">Imperial College Business School</td><td><span class="pill">United Kingdom</span></td><td contenteditable="true">Target</td><td contenteditable="true">12 months</td><td contenteditable="true">Average GMAT: ~660 (school does not publish)</td><td contenteditable="true">23 Sep 2025 • 13 Jan 2026 • 17 Mar 2026 • 28 Apr 2026</td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td></tr>
+        <tr class='Target'><td contenteditable="true">ESSEC Business School (Global MBA)</td><td><span class="pill">France</span></td><td contenteditable="true">Target</td><td contenteditable="true">12 months</td><td contenteditable="true">Average GMAT Focus (equiv): ~615</td><td contenteditable="true">Apps accepted through Jun 2026; Early Bird: 6 Oct 2025</td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td></tr>
+        <tr class='Safety'><td contenteditable="true">Warwick Business School</td><td><span class="pill">United Kingdom</span></td><td contenteditable="true">Safety</td><td contenteditable="true">12 months</td><td contenteditable="true">Average GMAT: 670 (615 Focus)</td><td contenteditable="true">2026 cycle TBA; 2025 example rounds: 6 Oct • 10 Nov • 12 Jan • 30 Mar • 21 May (Intl) • 31 Jul</td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td></tr>
+        <tr class='Safety'><td contenteditable="true">ESADE Barcelona</td><td><span class="pill">Spain</span></td><td contenteditable="true">Safety</td><td contenteditable="true">12 / 15 / 18 months</td><td contenteditable="true">Average GMAT: ~660 (615 Focus)</td><td contenteditable="true">2026 cycle TBA; 2024–25 rounds ran Oct–Jun monthly (9 rounds)</td><td contenteditable="true">Expect similar cadence; verify when 2026 calendar posts</td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td></tr>
+        <tr class='Safety'><td contenteditable="true">ESMT Berlin</td><td><span class="pill">Germany</span></td><td contenteditable="true">Safety</td><td contenteditable="true">15 months</td><td contenteditable="true">Average GMAT: ~640</td><td contenteditable="true">Jan 2026 intake timeline: R1 28 Feb 2025 • R2 11 Apr 2025 • R3 30 May 2025 • Visa cutoff 22 Aug 2025 • Final 14 Nov 2025</td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td></tr>
+        <tr class='Safety'><td contenteditable="true">Stockholm School of Economics (SSE) – MBA</td><td><span class="pill">Sweden</span></td><td contenteditable="true">Safety</td><td contenteditable="true">~12 months (intensive / exec-style)</td><td contenteditable="true">GMAT: not required; not published</td><td contenteditable="true">Rolling; decisions end-May/Jun/Aug/Sep/Oct (next start Jan)</td><td contenteditable="true">Program branded as Executive MBA; confirm fit vs full-time MBA</td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td></tr>
+        <tr class='USWildcard'><td contenteditable="true">Michigan Ross School of Business</td><td><span class="pill">United States</span></td><td contenteditable="true">US Wildcard</td><td contenteditable="true">24 months</td><td contenteditable="true">Average GMAT: 728</td><td contenteditable="true">R1: 8 Sep 2025 • R2: 5 Jan 2026 • R3: 23 Mar 2026</td><td contenteditable="true">Apps due 11:59pm ET on deadlines</td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="small">Tip: Click any cell to edit. Your changes auto-save locally. Export CSV anytime.</p>
+</section>
+
+<!-- PLANNER -->
+<section id="planner" class="panel" style="display:none">
+  <div class="planner-grid">
+    <div class="card">
+      <h3>Electives — Considering</h3>
+      <div class="row">
+        <select id="pl-school"></select>
+        <input id="pl-category" type="text" placeholder="Broad category (e.g., Strategy & Geopolitics)">
+        <input id="pl-title" type="text" placeholder="Elective title (exact, from brochure)">
+        <input id="pl-notes" type="text" placeholder="Notes (why relevant, prof, term)">
+        <button class="btn" id="pl-add">Add</button>
+      </div>
+      <div id="considering"></div>
+    </div>
+    <div class="card">
+      <h3>Electives — Chosen</h3>
+      <p class="small">Counters respect each school’s <b>Max Electives</b> (soft limit) set in the CRM.</p>
+      <div id="chosen"></div>
+    </div>
+  </div>
+  <div class="row" style="margin-top:10px">
+    <button class="btn" id="export-planner">Export Planner JSON</button>
+    <label class="btn">Import JSON<input id="import-json" type="file" accept="application/json" style="display:none"></label>
+    <button class="btn" id="clear-planner">Clear Planner</button>
+  </div>
+</section>
+
+<!-- ESSAY -->
+<section id="essay" class="panel" style="display:none">
   <div class="row">
     <select id="eq-school"></select>
     <select id="eq-type">
@@ -145,70 +180,280 @@
   <div class="row">
     <button class="btn" id="eq-add">Add Question</button>
     <button class="btn" id="eq-export">Export JSON</button>
-    <label class="btn">Import JSON
-      <input id="eq-import" type="file" accept="application/json" style="display:none">
-    </label>
+    <label class="btn">Import JSON<input id="eq-import" type="file" accept="application/json" style="display:none"></label>
     <button class="btn" id="eq-clear">Clear All</button>
   </div>
-
   <div id="eq-list"></div>
-  <p class="small">All entries save locally (localStorage). Use Export/Import as backup.</p>
+  <p class="small">All entries save locally (localStorage). Use Export/Import for backup.</p>
 </section>
 
 <script>
-/* ========= BASIC TAB SWITCH: toggles body.classList to hide CRM + show Essay ========= */
+/* ===== Tabs ===== */
 (function(){
+  const panels = { crm: document.getElementById('crm'), planner: document.getElementById('planner'), essay: document.getElementById('essay') };
   const tabs = document.getElementById('app-tabs');
-  const ensureCRMTagged = () => {
-    // Tag obvious CRM elements so we can hide them in essay mode without you editing existing HTML
-    const sel = [
-      'h1', '.meta', '.toolbar', 'table', 'p.small'
-    ];
-    sel.forEach(s => document.querySelectorAll(s).forEach(el => el.classList.add('crm-only')));
-  };
-  ensureCRMTagged();
-
-  function activate(mode){
-    // mode: 'crm' or 'essay'
-    document.body.classList.toggle('mode-essay', mode==='essay');
-    tabs.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    tabs.querySelector(`[data-tab="${mode}"]`).classList.add('active');
+  function show(id){
+    Object.keys(panels).forEach(k => panels[k].style.display = (k===id?'block':'none'));
+    tabs.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active', t.dataset.tab===id));
+    if(id==='planner'){ setTimeout(refreshPlannerSchoolOptions, 50); }
+    if(id==='essay'){ setTimeout(populateEssaySchoolSelect, 50); }
   }
-
   tabs.addEventListener('click', (e)=>{
     const t = e.target.closest('.tab'); if(!t) return;
-    const mode = t.dataset.tab === 'essay' ? 'essay' : 'crm';
-    activate(mode);
+    show(t.dataset.tab);
+  });
+  show('crm'); // default
+})();
+
+/* ===== CRM: editing, filters, CSV, autosave ===== */
+(function(){
+  const KEY='mba_crm_sheet_v5';
+  const tbody = document.querySelector('#crm-table tbody');
+
+  function enableEditing(){
+    tbody.querySelectorAll('td[contenteditable="true"]').forEach(td=>{
+      td.addEventListener('click', ()=>{
+        if(td.querySelector('input')) return;
+        const v = td.innerText;
+        const i = document.createElement('input');
+        i.value=v; i.style.width='100%'; i.style.background='transparent'; i.style.color='inherit';
+        i.style.border='1px solid var(--border)'; i.style.borderRadius='6px'; i.style.padding='6px 8px';
+        td.innerHTML=''; td.appendChild(i); i.focus();
+        i.addEventListener('blur', ()=>{ td.innerHTML=i.value; autosave(); refreshPlannerSchoolOptions(); populateEssaySchoolSelect(); });
+        i.addEventListener('keydown', e=>{ if(e.key==='Enter') i.blur(); if(e.key==='Escape'){ td.innerHTML=v; }});
+      });
+    });
+  }
+
+  function autosave(){
+    const rows=[...tbody.querySelectorAll('tr')].map(tr =>
+      [...tr.children].map((td,j)=>{
+        // store plain text (avoid nested spans ambiguity)
+        return j===1 ? (td.innerText||'').trim() : td.innerText;
+      })
+    );
+    localStorage.setItem(KEY, JSON.stringify(rows));
+  }
+
+  function load(){
+    const raw=localStorage.getItem(KEY); if(!raw) return;
+    const data=JSON.parse(raw);
+    const trs=tbody.querySelectorAll('tr');
+    data.forEach((cells,i)=>{
+      const tr=trs[i]; if(!tr) return;
+      cells.forEach((v,j)=>{
+        if(j===1){ tr.children[j].innerHTML = '<span class="pill">'+v+'</span>'; }
+        else tr.children[j].innerText = v;
+      });
+    });
+  }
+
+  function filter(){
+    const q=document.getElementById('q').value.toLowerCase().trim();
+    const country=document.getElementById('filter-country').value;
+    const cat=document.getElementById('filter-category').value.toLowerCase();
+    tbody.querySelectorAll('tr').forEach(tr=>{
+      const text=tr.innerText.toLowerCase();
+      let ok = !q || text.includes(q);
+      if(country) ok = ok && tr.children[1].innerText.trim()===country;
+      if(cat) ok = ok && tr.children[2].innerText.toLowerCase().trim()===cat;
+      tr.style.display = ok ? '' : 'none';
+    });
+  }
+
+  function exportCSV(){
+    const rows = [];
+    const table = document.querySelector('#crm-table');
+    table.querySelectorAll('tr').forEach(tr=>{
+      const cols = [];
+      tr.querySelectorAll('th,td').forEach(td=>{
+        let t = td.innerText.replace(/\n/g,' ').replace(/\s+/g,' ').trim();
+        if(t.includes(',')||t.includes('"')) t='"'+t.replace(/"/g,'""')+'"';
+        cols.push(t);
+      });
+      rows.push(cols.join(','));
+    });
+    const blob = new Blob([rows.join('\n')], {type:'text/csv;charset=utf-8;'});
+    const url = URL.createObjectURL(blob);
+    const a=document.createElement('a'); a.href=url; a.download='MBA_CRM.csv'; a.click(); URL.revokeObjectURL(url);
+  }
+
+  window.addEventListener('load', ()=>{
+    load(); enableEditing();
+    document.getElementById('q').addEventListener('input', filter);
+    document.getElementById('filter-country').addEventListener('input', filter);
+    document.getElementById('filter-category').addEventListener('input', filter);
+    document.getElementById('export').addEventListener('click', exportCSV);
   });
 
-  // ======= ESSAY QUESTIONS: state, render, persistence =======
-  const KEY_EQ = 'essay_questions_v1';
+  // Observe table changes (e.g., after load) to refresh dropdowns reliably
+  const table = document.getElementById('crm-table');
+  if (table && 'MutationObserver' in window) {
+    const mo = new MutationObserver(()=>{ clearTimeout(mo._t); mo._t=setTimeout(()=>{ refreshPlannerSchoolOptions(); populateEssaySchoolSelect(); }, 50); });
+    mo.observe(table, { childList:true, subtree:true, characterData:true });
+  }
+})();
 
-  function readCRMNames(){
-    // Get school names from first column of your existing table
-    const rows = [...document.querySelectorAll('table tbody tr')];
-    return rows.map(r => (r.children[0]?.innerText||'').trim()).filter(Boolean);
+/* ===== Helpers to read school names + max electives from CRM ===== */
+function getCRMRows(){
+  const rows=[...document.querySelectorAll('#crm-table tbody tr')];
+  return rows.map(tr=>[...tr.children].map(td=>td.innerText));
+}
+function getSchoolNames(){
+  return getCRMRows().map(r=>r[0].trim()).filter(Boolean);
+}
+function getMaxForSchool(name){
+  const rows=getCRMRows();
+  for(const r of rows){
+    if(r[0].trim()===name.trim()){
+      const raw=r[7]?.trim(); const n=parseInt(raw,10);
+      return isNaN(n)?null:n;
+    }
+  }
+  return null;
+}
+
+/* ===== Elective Planner ===== */
+(function(){
+  const PK_CONSIDERING='electives_considering_v3';
+  const PK_CHOSEN='electives_chosen_v3';
+
+  function countsForSchool(name, chosen){
+    return chosen.filter(x=>x.school===name).length;
+  }
+  function softLimitLabel(name, chosen){
+    const max=getMaxForSchool(name);
+    const cnt=countsForSchool(name, chosen);
+    if(max==null) return `<span class="counter">Max: —</span>`;
+    if(cnt<max) return `<span class="counter ok">Chosen ${cnt} / ${max}</span>`;
+    if(cnt===max) return `<span class="counter warn">Chosen ${cnt} / ${max} (full)</span>`;
+    return `<span class="counter danger">Over by ${cnt-max}</span>`;
   }
 
-  function populateSchoolSelect(){
-    const sel = document.getElementById('eq-school');
-    const names = readCRMNames();
-    sel.innerHTML = names.map(n => `<option>${n}</option>`).join('');
+  function renderLists(){
+    const ctnC=document.getElementById('considering');
+    const ctnH=document.getElementById('chosen');
+    const considering=JSON.parse(localStorage.getItem(PK_CONSIDERING)||'[]');
+    const chosen=JSON.parse(localStorage.getItem(PK_CHOSEN)||'[]');
+
+    function card(it, list){
+      return `
+        <div class="item" data-school="${it.school}">
+          <div class="label">
+            <div class="school">${it.school}</div>
+            <div class="meta">${it.category} • ${it.title}</div>
+            <div class="small">${it.notes||""}</div>
+            <div class="small">${softLimitLabel(it.school, chosen)}</div>
+          </div>
+          <div class="actions">
+            ${list==='considering' ? '<button class="btn" data-move="to-chosen">Choose</button>' : '<button class="btn" data-move="to-considering">Unchoose</button>'}
+            <button class="btn" data-del="1">Delete</button>
+          </div>
+        </div>`;
+    }
+
+    ctnC.innerHTML = considering.length ? considering.map(it=>card(it,'considering')).join('') : '<p class="small">No electives yet — add them above.</p>';
+    ctnH.innerHTML = chosen.length ? chosen.map(it=>card(it,'chosen')).join('') : '<p class="small">Nothing chosen yet.</p>';
+
+    function bind(container, listName){
+      container.querySelectorAll('.item').forEach((node, idx)=>{
+        node.querySelectorAll('button').forEach(btn=>{
+          if(btn.dataset.del){
+            btn.addEventListener('click', ()=>{
+              const key = (listName==='considering')?PK_CONSIDERING:PK_CHOSEN;
+              const arr = JSON.parse(localStorage.getItem(key)||'[]');
+              arr.splice(idx,1); localStorage.setItem(key, JSON.stringify(arr)); renderLists();
+            });
+          }else if(btn.dataset.move){
+            btn.addEventListener('click', ()=>{
+              const srcKey = (listName==='considering')?PK_CONSIDERING:PK_CHOSEN;
+              const dstKey = (listName==='considering')?PK_CHOSEN:PK_CONSIDERING;
+              const src = JSON.parse(localStorage.getItem(srcKey)||'[]');
+              const dst = JSON.parse(localStorage.getItem(dstKey)||'[]');
+              const item = src.splice(idx,1)[0];
+              dst.push(item);
+              localStorage.setItem(srcKey, JSON.stringify(src));
+              localStorage.setItem(dstKey, JSON.stringify(dst));
+              renderLists();
+            });
+          }
+        });
+      });
+    }
+    bind(ctnC, 'considering');
+    bind(ctnH, 'chosen');
   }
 
-  function loadEQ(){
-    try{ return JSON.parse(localStorage.getItem(KEY_EQ) || '[]'); }catch(e){ return []; }
+  function refreshPlannerSchoolOptions(){
+    const sel=document.getElementById('pl-school'); if(!sel) return;
+    const names=getSchoolNames();
+    sel.innerHTML = names.length ? names.map(n=>`<option>${n}</option>`).join('') : `<option value="">— No schools detected —</option>`;
   }
-  function saveEQ(arr){
-    localStorage.setItem(KEY_EQ, JSON.stringify(arr));
+  window.refreshPlannerSchoolOptions = refreshPlannerSchoolOptions; // expose
+
+  document.getElementById('pl-add').addEventListener('click', ()=>{
+    const school=document.getElementById('pl-school').value.trim();
+    const category=document.getElementById('pl-category').value.trim();
+    const title=document.getElementById('pl-title').value.trim();
+    const notes=document.getElementById('pl-notes').value.trim();
+    if(!school||!category||!title){ alert('Please fill School, Category, and Elective title.'); return; }
+    const arr=JSON.parse(localStorage.getItem(PK_CONSIDERING)||'[]');
+    arr.push({school, category, title, notes});
+    localStorage.setItem(PK_CONSIDERING, JSON.stringify(arr));
+    document.getElementById('pl-title').value=''; document.getElementById('pl-notes').value='';
+    renderLists();
+  });
+
+  document.getElementById('export-planner').addEventListener('click', ()=>{
+    const data = {
+      considering: JSON.parse(localStorage.getItem(PK_CONSIDERING)||'[]'),
+      chosen: JSON.parse(localStorage.getItem(PK_CHOSEN)||'[]')
+    };
+    const blob = new Blob([JSON.stringify(data,null,2)], {type:'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a=document.createElement('a'); a.href=url; a.download='ElectivePlanner.json'; a.click(); URL.revokeObjectURL(url);
+  });
+  document.getElementById('import-json').addEventListener('change', (e)=>{
+    const file=e.target.files[0]; if(!file) return;
+    const reader=new FileReader();
+    reader.onload=()=>{
+      try{
+        const data=JSON.parse(reader.result);
+        if(data.considering) localStorage.setItem(PK_CONSIDERING, JSON.stringify(data.considering));
+        if(data.chosen) localStorage.setItem(PK_CHOSEN, JSON.stringify(data.chosen));
+        renderLists();
+        alert('Planner data imported.');
+      }catch(err){ alert('Invalid JSON'); }
+    };
+    reader.readAsText(file);
+  });
+  document.getElementById('clear-planner').addEventListener('click', ()=>{
+    if(confirm('Clear all electives in planner?')){
+      localStorage.removeItem(PK_CONSIDERING);
+      localStorage.removeItem(PK_CHOSEN);
+      renderLists();
+    }
+  });
+
+  window.addEventListener('load', ()=>{ refreshPlannerSchoolOptions(); renderLists(); });
+})();
+
+/* ===== Essay Questions ===== */
+(function(){
+  const KEY_EQ = 'essay_questions_v2';
+
+  function populateEssaySchoolSelect(){
+    const sel = document.getElementById('eq-school'); if(!sel) return;
+    const names=getSchoolNames();
+    sel.innerHTML = names.length ? names.map(n=>`<option>${n}</option>`).join('') : `<option value="">— No schools detected —</option>`;
   }
+  window.populateEssaySchoolSelect = populateEssaySchoolSelect; // expose
+
+  function loadEQ(){ try{ return JSON.parse(localStorage.getItem(KEY_EQ)||'[]'); }catch(e){ return []; } }
+  function saveEQ(arr){ localStorage.setItem(KEY_EQ, JSON.stringify(arr)); }
 
   function groupBySchool(items){
-    const map = {};
-    for(const it of items){
-      (map[it.school] = map[it.school] || []).push(it);
-    }
-    return map;
+    const map = {}; items.forEach(it => (map[it.school]=map[it.school]||[]).push(it)); return map;
   }
 
   function renderEQ(){
@@ -217,7 +462,7 @@
     if(!data.length){ list.innerHTML = '<div class="card"><div class="small">No questions yet. Add one above.</div></div>'; return; }
     const bySchool = groupBySchool(data);
     const blocks = Object.keys(bySchool).sort().map(school=>{
-      const items = bySchool[school].map((it, idx)=>{
+      return bySchool[school].map(it=>{
         const tags = [
           it.type ? `<span class="tag">${it.type}</span>`:'',
           it.wordlimit ? `<span class="tag">${it.wordlimit} words</span>`:'',
@@ -234,26 +479,18 @@
               <button class="btn" data-edit="1">Edit</button>
               <button class="btn" data-del="1">Delete</button>
             </div>
-          </div>
-        `;
+          </div>`;
       }).join('');
-      return items;
     }).join('');
     list.innerHTML = blocks;
 
-    // bind edit/delete
     list.querySelectorAll('.card').forEach(card=>{
       const id = card.getAttribute('data-id');
-      const btnDel = card.querySelector('[data-del]');
-      const btnEd = card.querySelector('[data-edit]');
-      btnDel.addEventListener('click', ()=>{
-        const arr = loadEQ().filter(x => String(x.id) !== String(id));
-        saveEQ(arr); renderEQ();
+      card.querySelector('[data-del]').addEventListener('click', ()=>{
+        const arr = loadEQ().filter(x => String(x.id)!==String(id)); saveEQ(arr); renderEQ();
       });
-      btnEd.addEventListener('click', ()=>{
-        // load entry into form
-        const it = loadEQ().find(x => String(x.id)===String(id));
-        if(!it) return;
+      card.querySelector('[data-edit]').addEventListener('click', ()=>{
+        const it = loadEQ().find(x => String(x.id)===String(id)); if(!it) return;
         document.getElementById('eq-school').value = it.school;
         document.getElementById('eq-type').value = it.type || 'Required essay';
         document.getElementById('eq-wordlimit').value = it.wordlimit || '';
@@ -261,18 +498,13 @@
         document.getElementById('eq-theme').value = it.theme || '';
         document.getElementById('eq-notes').value = it.notes || '';
         document.getElementById('eq-question').value = it.question || '';
-        // replace existing on next add
         document.getElementById('eq-add').dataset.editingId = it.id;
-        // switch to essay tab if not active
-        document.body.classList.add('mode-essay');
-        document.querySelector('#app-tabs .tab[data-tab="essay"]').classList.add('active');
-        document.querySelector('#app-tabs .tab[data-tab="crm"]').classList.remove('active');
-        document.getElementById('eq-question').focus();
+        document.querySelector('.tab[data-tab="essay"]').click();
       });
     });
   }
 
-  function addOrUpdateEQ(){
+  function addOrUpdate(){
     const school = document.getElementById('eq-school').value.trim();
     const type = document.getElementById('eq-type').value.trim();
     const wordlimit = document.getElementById('eq-wordlimit').value.trim();
@@ -287,17 +519,14 @@
 
     if(editingId){
       const ix = arr.findIndex(x => String(x.id)===String(editingId));
-      if(ix>=0){
-        arr[ix] = { ...arr[ix], school, type, wordlimit, deadline, theme, notes, question };
-      }
+      if(ix>=0){ arr[ix] = { ...arr[ix], school, type, wordlimit, deadline, theme, notes, question }; }
       delete document.getElementById('eq-add').dataset.editingId;
     }else{
-      const id = Date.now();
-      arr.push({ id, school, type, wordlimit, deadline, theme, notes, question });
+      arr.push({ id: Date.now(), school, type, wordlimit, deadline, theme, notes, question });
     }
-
     saveEQ(arr);
-    // clear form (except school)
+
+    // clear (keep school)
     document.getElementById('eq-type').value = 'Required essay';
     document.getElementById('eq-wordlimit').value = '';
     document.getElementById('eq-deadline').value = '';
@@ -308,411 +537,42 @@
     renderEQ();
   }
 
-  // export/import/clear
   function exportEQ(){
     const arr = loadEQ();
     const blob = new Blob([JSON.stringify(arr, null, 2)], {type:'application/json'});
     const url = URL.createObjectURL(blob);
-    const a = document.createElement('a'); a.href=url; a.download='EssayQuestions.json'; a.click();
-    URL.revokeObjectURL(url);
+    const a = document.createElement('a'); a.href=url; a.download='EssayQuestions.json'; a.click(); URL.revokeObjectURL(url);
   }
   function importEQ(file){
     const reader = new FileReader();
-    reader.onload = ()=>{
+    reader.onload=()=>{
       try{
-        const data = JSON.parse(reader.result);
-        if(Array.isArray(data)){ saveEQ(data); renderEQ(); }
+        const data=JSON.parse(reader.result);
+        if(Array.isArray(data)){ localStorage.setItem(KEY_EQ, JSON.stringify(data)); renderEQ(); }
         else alert('Invalid JSON');
       }catch(e){ alert('Invalid JSON'); }
     };
     reader.readAsText(file);
   }
 
-  // init
-  populateSchoolSelect();
-  renderEQ();
-
-  document.getElementById('eq-add').addEventListener('click', addOrUpdateEQ);
+  document.getElementById('eq-add').addEventListener('click', addOrUpdate);
   document.getElementById('eq-export').addEventListener('click', exportEQ);
-  document.getElementById('eq-import').addEventListener('change', e => { if(e.target.files[0]) importEQ(e.target.files[0]); });
+  document.getElementById('eq-import').addEventListener('change', e=>{ if(e.target.files[0]) importEQ(e.target.files[0]); });
   document.getElementById('eq-clear').addEventListener('click', ()=>{
     if(confirm('Clear all saved essay questions?')){ localStorage.removeItem(KEY_EQ); renderEQ(); }
   });
 
-  // Optional: keyboard shortcut to jump to Essay tab
-  document.addEventListener('keydown', (e)=>{
-    if(e.key.toLowerCase()==='e' && (e.ctrlKey || e.metaKey)){ e.preventDefault(); activate('essay'); }
-  });
-})();
-  <script>
-(function(){
-  // Use your specific table if it exists; fallback to the first table.
-  const CRM_SELECTOR = '#crm-table tbody tr, table tbody tr';
+  // initial
+  window.addEventListener('load', ()=>{ populateEssaySchoolSelect(); renderEQ(); });
 
-  function readCRMNames(){
-    const rows = document.querySelectorAll(CRM_SELECTOR);
-    return [...rows]
-      .map(r => (r.children?.[0]?.innerText || '').trim())
-      .filter(Boolean);
-  }
-
-  function populateSchoolSelect(){
-    const sel = document.getElementById('eq-school');
-    if(!sel) return;
-    const names = readCRMNames();
-    sel.innerHTML = names.length
-      ? names.map(n => `<option>${n}</option>`).join('')
-      : `<option value="">— No schools detected yet —</option>`;
-  }
-
-  // Re-populate when switching tabs (so it catches freshly restored CRM data)
-  const tabs = document.getElementById('app-tabs');
-  if (tabs) {
-    tabs.addEventListener('click', (e)=>{
-      const t = e.target.closest('.tab'); if(!t) return;
-      if (t.dataset.tab === 'essay') {
-        // brief delay to allow any CRM loadsave() to finish
-        setTimeout(populateSchoolSelect, 50);
-      }
-    });
-  }
-
-  // Initial populate after load + a small delay
-  window.addEventListener('load', ()=> {
-    setTimeout(populateSchoolSelect, 100);
-  });
-
-  // Watch the table for changes (e.g., when loadsave() overwrites cells)
-  const table = document.querySelector('#crm-table') || document.querySelector('table');
+  // also refresh dropdown whenever CRM table mutates
+  const table = document.getElementById('crm-table');
   if (table && 'MutationObserver' in window) {
-    const mo = new MutationObserver(() => {
-      // Debounce: re-populate once after a burst of mutations
-      clearTimeout(mo._t);
-      mo._t = setTimeout(populateSchoolSelect, 50);
-    });
-    mo.observe(table, { childList: true, subtree: true, characterData: true });
+    const mo = new MutationObserver(()=>{ clearTimeout(mo._t); mo._t=setTimeout(populateEssaySchoolSelect, 50); });
+    mo.observe(table, { childList:true, subtree:true, characterData:true });
   }
 })();
 </script>
-</head>
-<body>
 
-<h1>MBA CRM + Elective Planner</h1>
-<div class="meta">Generated 2025-08-12 • Full-time MBAs only. Data saves locally in your browser.</div>
-
-<!-- Tabs -->
-<div class="tabs">
-  <div class="tab active" data-tab="crm">School CRM</div>
-  <div class="tab" data-tab="planner">Elective Planner</div>
-</div>
-
-<!-- CRM PANEL -->
-<section id="crm" class="panel">
-  <div class="toolbar">
-    <input id="q" type="search" placeholder="Search… (school, country, notes)">
-    <select id="filter-country">
-      <option value="">All countries</option>
-      <option>Spain</option><option>Italy</option><option>Netherlands</option><option>Germany</option>
-      <option>United Kingdom</option><option>France</option><option>Sweden</option><option>United States</option>
-    </select>
-    <select id="filter-category">
-      <option value="">All categories</option>
-      <option>Dream</option>
-      <option>Target</option>
-      <option>Safety</option>
-      <option>US Wildcard</option>
-    </select>
-    <button id="export" class="btn">Export CSV</button>
-  </div>
-
-  <div class="table-wrap">
-    <table id="crm-table">
-      <thead>
-        <tr>
-          <th>School Name</th>
-          <th>Country</th>
-          <th>Category</th>
-          <th>Duration</th>
-          <th>Average / Median GMAT</th>
-          <th>Application Deadlines (2025–26 cycle)</th>
-          <th>Notes</th>
-          <th>Max Electives (per program)</th> <!-- NEW -->
-          <th>Electives (leave blank)</th>
-          <th>Alumni You Can Contact (leave blank)</th>
-          <th>LinkedIn Contact from AdComms</th>
-        </tr>
-      </thead>
-      <tbody>
-        <!-- Your existing rows with one extra empty <td> for max electives (8th col) -->
-        <tr class='Dream'><td contenteditable="true">IESE Business School</td><td><span class="pill">Spain</span></td><td contenteditable="true">Dream</td><td contenteditable="true">15 or 19 months</td><td contenteditable="true">No official average; GMAT acceptance range 545–715 (Focus) / 580–750 (Classic)</td><td contenteditable="true">R1: 25 Sep 2025 • R2: 9 Jan 2026 • R3: 12 Mar 2026 • R4*: 8 May 2026</td><td contenteditable="true">*R4 typically for EU passport holders or visa-exempt; check IESE site</td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td></tr>
-        <tr class='Dream'><td contenteditable="true">University of Oxford – Saïd</td><td><span class="pill">United Kingdom</span></td><td contenteditable="true">Dream</td><td contenteditable="true">12 months</td><td contenteditable="true">Median GMAT: 680</td><td contenteditable="true">Stage 1: 1 Sep 2025 • Stage 2: 1 Oct 2025 • Stage 3: 3 Nov 2025 • Stage 4: 7 Jan 2026 • Stage 5: 16 Mar 2026</td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td></tr>
-        <tr class='Dream'><td contenteditable="true">University of Cambridge – Judge</td><td><span class="pill">United Kingdom</span></td><td contenteditable="true">Dream</td><td contenteditable="true">12 months</td><td contenteditable="true">Average GMAT: 697</td><td contenteditable="true">R2: 6 Oct 2025 • R3: 5 Jan 2026 • R4: 30 Mar 2026 • R5: 5 May 2026</td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td></tr>
-        <tr class='Target'><td contenteditable="true">IE Business School</td><td><span class="pill">Spain</span></td><td contenteditable="true">Target</td><td contenteditable="true">11–15 months</td><td contenteditable="true">Average GMAT: ~680</td><td contenteditable="true">Rolling admissions (examples: final day for Sep 2025 start—1 Sep 2025; Jan 2026 start—30 Dec 2025)</td><td contenteditable="true">Apply early for scholarships; seats fill on a rolling basis</td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td></tr>
-        <tr class='Target'><td contenteditable="true">SDA Bocconi</td><td><span class="pill">Italy</span></td><td contenteditable="true">Target</td><td contenteditable="true">12 months</td><td contenteditable="true">Average GMAT: ~650–665</td><td contenteditable="true">R1: 4 Nov 2025 • R2: 13 Jan 2026 • R3: 3 Mar 2026 • R4: 15 Apr 2026</td><td contenteditable="true">Application deadline for 2026 intake: 15 Apr 2026</td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td></tr>
-        <tr class='Target'><td contenteditable="true">Rotterdam School of Management (RSM)</td><td><span class="pill">Netherlands</span></td><td contenteditable="true">Target</td><td contenteditable="true">12 months</td><td contenteditable="true">Average GMAT: ~640</td><td contenteditable="true">Jan 2026 intake rounds: 11 Feb • 8 Apr • 3 Jun • 12 Aug • 1 Oct • 4 Nov 2025</td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td></tr>
-        <tr class='Target'><td contenteditable="true">Imperial College Business School</td><td><span class="pill">United Kingdom</span></td><td contenteditable="true">Target</td><td contenteditable="true">12 months</td><td contenteditable="true">Average GMAT: ~660 (school does not publish)</td><td contenteditable="true">23 Sep 2025 • 13 Jan 2026 • 17 Mar 2026 • 28 Apr 2026</td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td></tr>
-        <tr class='Target'><td contenteditable="true">ESSEC Business School (Global MBA)</td><td><span class="pill">France</span></td><td contenteditable="true">Target</td><td contenteditable="true">12 months</td><td contenteditable="true">Average GMAT Focus (equiv): ~615</td><td contenteditable="true">Apps accepted through Jun 2026; Early Bird: 6 Oct 2025</td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td></tr>
-        <tr class='Safety'><td contenteditable="true">Warwick Business School</td><td><span class="pill">United Kingdom</span></td><td contenteditable="true">Safety</td><td contenteditable="true">12 months</td><td contenteditable="true">Average GMAT: 670 (615 Focus)</td><td contenteditable="true">2026 cycle TBA; 2025 example rounds: 6 Oct • 10 Nov • 12 Jan • 30 Mar • 21 May (Intl) • 31 Jul</td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td></tr>
-        <tr class='Safety'><td contenteditable="true">ESADE Barcelona</td><td><span class="pill">Spain</span></td><td contenteditable="true">Safety</td><td contenteditable="true">12 / 15 / 18 months</td><td contenteditable="true">Average GMAT: ~660 (615 Focus)</td><td contenteditable="true">2026 cycle TBA; 2024–25 rounds ran Oct–Jun monthly (9 rounds)</td><td contenteditable="true">Expect similar cadence; verify when 2026 calendar posts</td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td></tr>
-        <tr class='Safety'><td contenteditable="true">ESMT Berlin</td><td><span class="pill">Germany</span></td><td contenteditable="true">Safety</td><td contenteditable="true">15 months</td><td contenteditable="true">Average GMAT: ~640</td><td contenteditable="true">Jan 2026 intake timeline: R1 28 Feb 2025 • R2 11 Apr 2025 • R3 30 May 2025 • Visa cutoff 22 Aug 2025 • Final 14 Nov 2025</td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td></tr>
-        <tr class='Safety'><td contenteditable="true">Stockholm School of Economics (SSE) – MBA</td><td><span class="pill">Sweden</span></td><td contenteditable="true">Safety</td><td contenteditable="true">~12 months (intensive / exec-style)</td><td contenteditable="true">GMAT: not required; not published</td><td contenteditable="true">Rolling; decisions end-May/Jun/Aug/Sep/Oct (next start Jan)</td><td contenteditable="true">Program branded as Executive MBA; confirm fit vs full-time MBA</td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td></tr>
-        <tr class='USWildcard'><td contenteditable="true">Michigan Ross School of Business</td><td><span class="pill">United States</span></td><td contenteditable="true">US Wildcard</td><td contenteditable="true">24 months</td><td contenteditable="true">Average GMAT: 728</td><td contenteditable="true">R1: 8 Sep 2025 • R2: 5 Jan 2026 • R3: 23 Mar 2026</td><td contenteditable="true">Apps due 11:59pm ET on deadlines</td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td></tr>
-      </tbody>
-    </table>
-  </div>
-  <p class="small">Tip: Click any cell to edit. Your changes auto-save locally. Export CSV anytime.</p>
-</section>
-
-<!-- PLANNER PANEL -->
-<section id="planner" class="panel" style="display:none">
-  <div class="planner-grid">
-    <div class="card">
-      <h3>Electives — Considering</h3>
-      <div class="row">
-        <select id="pl-school"></select>
-        <input id="pl-category" type="text" placeholder="Broad category (e.g., Strategy & Geopolitics)">
-        <input id="pl-title" type="text" placeholder="Elective title (exact, from brochure)">
-        <input id="pl-notes" type="text" placeholder="Notes (why relevant, prof, term)">
-        <button class="btn" id="pl-add">Add</button>
-      </div>
-      <div id="considering"></div>
-    </div>
-    <div class="card">
-      <h3>Electives — Chosen</h3>
-      <p class="small">Counters respect each school’s <b>Max Electives</b> set in the CRM (soft limit).</p>
-      <div id="chosen"></div>
-    </div>
-  </div>
-  <div class="row" style="margin-top:10px">
-    <button class="btn" id="export-planner">Export Planner JSON</button>
-    <label class="btn">Import JSON<input id="import-json" type="file" accept="application/json" style="display:none"></label>
-    <button class="btn" id="clear-planner">Clear Planner</button>
-  </div>
-</section>
-
-<script>
-/* ---------- Tab logic ---------- */
-document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click', ()=>{
-  document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
-  t.classList.add('active');
-  const id = t.dataset.tab;
-  document.getElementById('crm').style.display = (id==='crm')?'block':'none';
-  document.getElementById('planner').style.display = (id==='planner')?'block':'none';
-}));
-
-/* ---------- CRM: editing, filters, CSV, autosave ---------- */
-function enableEditing(){
-  document.querySelectorAll('#crm-table td[contenteditable="true"]').forEach(td=>{
-    td.addEventListener('click', ()=>{
-      if(td.querySelector('input')) return;
-      const v = td.innerText;
-      const i = document.createElement('input');
-      i.value=v; i.style.width='100%'; i.style.background='transparent'; i.style.color='inherit';
-      i.style.border='1px solid var(--border)'; i.style.borderRadius='6px'; i.style.padding='6px 8px';
-      td.innerHTML=''; td.appendChild(i); i.focus();
-      i.addEventListener('blur', ()=>{ td.innerHTML=i.value; autosaveCRM(); refreshPlannerSchoolOptions(); });
-      i.addEventListener('keydown', e=>{ if(e.key==='Enter') i.blur(); if(e.key==='Escape'){ td.innerHTML=v; autosaveCRM(); }});
-    });
-  });
-}
-const KEY_CRM='mba_crm_sheet_v4';
-function autosaveCRM(){
-  const rows=[...document.querySelectorAll('#crm-table tbody tr')].map(tr=>
-    [...tr.children].map(td=>{
-      // store text only (avoid nested spans ambiguity)
-      return td.querySelector('.pill') ? td.querySelector('.pill').innerText : td.innerText;
-    })
-  );
-  localStorage.setItem(KEY_CRM, JSON.stringify(rows));
-}
-function loadCRM(){
-  const raw=localStorage.getItem(KEY_CRM); if(!raw) return;
-  const data=JSON.parse(raw);
-  const trs=document.querySelectorAll('#crm-table tbody tr');
-  data.forEach((cells,i)=>{
-    const tr=trs[i]; if(!tr) return;
-    cells.forEach((v,j)=>{
-      if(j===1){ tr.children[j].innerHTML = '<span class="pill">'+v+'</span>'; }
-      else tr.children[j].innerHTML = v;
-    });
-  });
-}
-function filter(){
-  const q=document.getElementById('q').value.toLowerCase().trim();
-  const country=document.getElementById('filter-country').value;
-  const cat=document.getElementById('filter-category').value.toLowerCase();
-  document.querySelectorAll('#crm-table tbody tr').forEach(tr=>{
-    const text=tr.innerText.toLowerCase();
-    let ok = !q || text.includes(q);
-    if(country){ ok = ok && tr.children[1].innerText.trim()===country; }
-    if(cat){ ok = ok && tr.children[2].innerText.toLowerCase().trim()===cat; }
-    tr.style.display = ok ? '' : 'none';
-  });
-}
-function exportCSV(){
-  const rows = [];
-  const table = document.querySelector('#crm-table');
-  table.querySelectorAll('tr').forEach(tr=>{
-    const cols = [];
-    tr.querySelectorAll('th,td').forEach(td=>{
-      let t = td.innerText.replace(/\n/g,' ').replace(/\s+/g,' ').trim();
-      if(t.includes(',')||t.includes('"')) t='"'+t.replace(/"/g,'""')+'"';
-      cols.push(t);
-    });
-    rows.push(cols.join(','));
-  });
-  const blob = new Blob([rows.join('\n')], {type:'text/csv;charset=utf-8;'});
-  const url = URL.createObjectURL(blob);
-  const a=document.createElement('a'); a.href=url; a.download='MBA_CRM.csv'; a.click(); URL.revokeObjectURL(url);
-}
-window.addEventListener('load', ()=>{
-  loadCRM(); enableEditing(); 
-  document.getElementById('q').addEventListener('input', filter);
-  document.getElementById('filter-country').addEventListener('input', filter);
-  document.getElementById('filter-category').addEventListener('input', filter);
-  document.getElementById('export').addEventListener('click', exportCSV);
-  refreshPlannerSchoolOptions(); renderLists();
-});
-
-/* ---------- Planner: uses CRM school list + per-school Max Electives ---------- */
-const PK_CONSIDERING='electives_considering_v2';
-const PK_CHOSEN='electives_chosen_v2';
-
-function getCRMRows(){
-  return [...document.querySelectorAll('#crm-table tbody tr')].map(tr=>[...tr.children].map(td=>td.innerText));
-}
-function refreshPlannerSchoolOptions(){
-  const sel=document.getElementById('pl-school');
-  if(!sel) return;
-  const names = getCRMRows().map(r=>r[0].trim()).filter(Boolean);
-  sel.innerHTML = names.map(n=>`<option>${n}</option>`).join('');
-}
-function maxForSchool(name){
-  const rows=getCRMRows();
-  for(const r of rows){
-    if(r[0].trim()===name.trim()){
-      const raw=r[7]?.trim(); // index 7 = "Max Electives" column
-      const n=parseInt(raw,10);
-      return isNaN(n)?null:n;
-    }
-  }
-  return null;
-}
-function countsForSchool(name, chosen){
-  return chosen.filter(x=>x.school===name).length;
-}
-function softLimitLabel(name, chosen){
-  const max=maxForSchool(name);
-  const cnt=countsForSchool(name, chosen);
-  if(max==null) return `<span class="counter">Max: —</span>`;
-  if(cnt<max) return `<span class="counter ok">Chosen ${cnt} / ${max}</span>`;
-  if(cnt===max) return `<span class="counter warn">Chosen ${cnt} / ${max} (full)</span>`;
-  return `<span class="counter danger">Over by ${cnt-max}</span>`;
-}
-function renderLists(){
-  const ctnC=document.getElementById('considering');
-  const ctnH=document.getElementById('chosen');
-  const considering=JSON.parse(localStorage.getItem(PK_CONSIDERING)||'[]');
-  const chosen=JSON.parse(localStorage.getItem(PK_CHOSEN)||'[]');
-
-  function card(it, list){
-    return `
-      <div class="item" data-school="${it.school}" data-category="${it.category}" data-title="${it.title}">
-        <div class="label">
-          <div class="school">${it.school}</div>
-          <div class="meta">${it.category} • ${it.title}</div>
-          <div class="small">${it.notes||""}</div>
-          <div class="small">${softLimitLabel(it.school, chosen)}</div>
-        </div>
-        <div class="actions">
-          ${list==='considering' ? '<button class="btn" data-move="to-chosen">Choose</button>' : '<button class="btn" data-move="to-considering">Unchoose</button>'}
-          <button class="btn" data-del="1">Delete</button>
-        </div>
-      </div>
-    `;
-  }
-
-  ctnC.innerHTML = considering.length ? considering.map(it=>card(it,'considering')).join('') : '<p class="small">No electives yet — add them above.</p>';
-  ctnH.innerHTML = chosen.length ? chosen.map(it=>card(it,'chosen')).join('') : '<p class="small">Nothing chosen yet.</p>';
-
-  function bind(container, listName){
-    container.querySelectorAll('.item').forEach((node, idx)=>{
-      node.querySelectorAll('button').forEach(btn=>{
-        if(btn.dataset.del){
-          btn.addEventListener('click', ()=>{
-            const key = (listName==='considering')?PK_CONSIDERING:PK_CHOSEN;
-            const arr = JSON.parse(localStorage.getItem(key)||'[]');
-            arr.splice(idx,1); localStorage.setItem(key, JSON.stringify(arr)); renderLists();
-          });
-        }else if(btn.dataset.move){
-          btn.addEventListener('click', ()=>{
-            const srcKey = (listName==='considering')?PK_CONSIDERING:PK_CHOSEN;
-            const dstKey = (listName==='considering')?PK_CHOSEN:PK_CONSIDERING;
-            const src = JSON.parse(localStorage.getItem(srcKey)||'[]');
-            const dst = JSON.parse(localStorage.getItem(dstKey)||'[]');
-            const item = src.splice(idx,1)[0];
-            dst.push(item);
-            localStorage.setItem(srcKey, JSON.stringify(src));
-            localStorage.setItem(dstKey, JSON.stringify(dst));
-            renderLists();
-          });
-        }
-      });
-    });
-  }
-  bind(ctnC, 'considering');
-  bind(ctnH, 'chosen');
-}
-
-document.getElementById('pl-add').addEventListener('click', ()=>{
-  const school=document.getElementById('pl-school').value.trim();
-  const category=document.getElementById('pl-category').value.trim();
-  const title=document.getElementById('pl-title').value.trim();
-  const notes=document.getElementById('pl-notes').value.trim();
-  if(!school||!category||!title){ alert('Please fill School, Category, and Elective title.'); return; }
-  const arr=JSON.parse(localStorage.getItem(PK_CONSIDERING)||'[]');
-  arr.push({school, category, title, notes});
-  localStorage.setItem(PK_CONSIDERING, JSON.stringify(arr));
-  document.getElementById('pl-title').value=''; document.getElementById('pl-notes').value='';
-  renderLists();
-});
-
-document.getElementById('export-planner').addEventListener('click', ()=>{
-  const data = {
-    considering: JSON.parse(localStorage.getItem(PK_CONSIDERING)||'[]'),
-    chosen: JSON.parse(localStorage.getItem(PK_CHOSEN)||'[]')
-  };
-  const blob = new Blob([JSON.stringify(data,null,2)], {type:'application/json'});
-  const url = URL.createObjectURL(blob);
-  const a=document.createElement('a'); a.href=url; a.download='ElectivePlanner.json'; a.click(); URL.revokeObjectURL(url);
-});
-document.getElementById('import-json').addEventListener('change', (e)=>{
-  const file=e.target.files[0]; if(!file) return;
-  const reader=new FileReader();
-  reader.onload=()=>{
-    try{
-      const data=JSON.parse(reader.result);
-      if(data.considering) localStorage.setItem(PK_CONSIDERING, JSON.stringify(data.considering));
-      if(data.chosen) localStorage.setItem(PK_CHOSEN, JSON.stringify(data.chosen));
-      renderLists(); alert('Planner data imported.');
-    }catch(err){ alert('Invalid JSON'); }
-  };
-  reader.readAsText(file);
-});
-document.getElementById('clear-planner').addEventListener('click', ()=>{
-  if(confirm('Clear all electives in planner?')){
-    localStorage.removeItem(PK_CONSIDERING);
-    localStorage.removeItem(PK_CHOSEN);
-    renderLists();
-  }
-});
-
-/* Search + keyboard focus */
-document.addEventListener('keydown', e=>{
-  if(e.key==='/' && document.activeElement.tagName!=='INPUT' && document.activeElement.tagName!=='TEXTAREA'){
-    e.preventDefault(); document.getElementById('q').focus();
-  }
-});
-</script>
 </body>
 </html>
