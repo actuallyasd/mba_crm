@@ -344,6 +344,55 @@
     if(e.key.toLowerCase()==='e' && (e.ctrlKey || e.metaKey)){ e.preventDefault(); activate('essay'); }
   });
 })();
+  <script>
+(function(){
+  // Use your specific table if it exists; fallback to the first table.
+  const CRM_SELECTOR = '#crm-table tbody tr, table tbody tr';
+
+  function readCRMNames(){
+    const rows = document.querySelectorAll(CRM_SELECTOR);
+    return [...rows]
+      .map(r => (r.children?.[0]?.innerText || '').trim())
+      .filter(Boolean);
+  }
+
+  function populateSchoolSelect(){
+    const sel = document.getElementById('eq-school');
+    if(!sel) return;
+    const names = readCRMNames();
+    sel.innerHTML = names.length
+      ? names.map(n => `<option>${n}</option>`).join('')
+      : `<option value="">— No schools detected yet —</option>`;
+  }
+
+  // Re-populate when switching tabs (so it catches freshly restored CRM data)
+  const tabs = document.getElementById('app-tabs');
+  if (tabs) {
+    tabs.addEventListener('click', (e)=>{
+      const t = e.target.closest('.tab'); if(!t) return;
+      if (t.dataset.tab === 'essay') {
+        // brief delay to allow any CRM loadsave() to finish
+        setTimeout(populateSchoolSelect, 50);
+      }
+    });
+  }
+
+  // Initial populate after load + a small delay
+  window.addEventListener('load', ()=> {
+    setTimeout(populateSchoolSelect, 100);
+  });
+
+  // Watch the table for changes (e.g., when loadsave() overwrites cells)
+  const table = document.querySelector('#crm-table') || document.querySelector('table');
+  if (table && 'MutationObserver' in window) {
+    const mo = new MutationObserver(() => {
+      // Debounce: re-populate once after a burst of mutations
+      clearTimeout(mo._t);
+      mo._t = setTimeout(populateSchoolSelect, 50);
+    });
+    mo.observe(table, { childList: true, subtree: true, characterData: true });
+  }
+})();
 </script>
 </head>
 <body>
