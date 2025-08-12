@@ -2,56 +2,247 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>MBA Application CRM – Exact Deadlines & GMAT</title>
+<title>MBA CRM + Elective Planner</title>
+
+<!-- Inter font for a clean, Apple-ish vibe -->
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
 <style>
-  body{font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;background:#0b0e16;color:#eaf0ff;margin:18px}
-  h1{margin:0} .meta{color:#9fb0d1;margin:6px 0 14px}
-  table{border-collapse:collapse;width:100%;background:#0f1422;border:1px solid #22304c;border-radius:12px;overflow:hidden}
-  th,td{border-bottom:1px solid #22304c;padding:10px 12px;text-align:left;font-size:14px;vertical-align:top}
-  th{background:#121a2d;color:#cfe0ff;position:sticky;top:0;z-index:2}
-  tr:hover{background:rgba(124,155,255,.08)}
-  .Dream td{background:rgba(255,127,150,.10)}
-  .Target td{background:rgba(255,214,102,.10)}
-  .Safety td{background:rgba(119,255,170,.10)}
-  .USWildcard td{background:rgba(124,155,255,.10)}
-  input[type=search], .btn{background:#121a2d;border:1px solid #22304c;color:#eaf0ff;padding:8px 10px;border-radius:8px;outline:none}
+  :root{
+    --bg:#0b0e16;
+    --panel:#0f1422;
+    --elev:#121a2d;
+    --muted:#9fb0d1;
+    --text:#eaf0ff;
+    --border:#22304c;
+    --chip:#151c2c;
+    --dream: rgba(255,127,150,.12);
+    --target: rgba(255,214,102,.12);
+    --safety: rgba(119,255,170,.12);
+    --uswild: rgba(124,155,255,.12);
+    --accent:#7c9bff;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:18px;
+    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    color:var(--text);
+    background:
+      radial-gradient(900px 600px at 10% -10%, #0f1a33 0%, rgba(15,26,51,0) 60%),
+      linear-gradient(180deg,#0b0e16,#0b1222 40%, #0a0f1a 100%);
+  }
+  h1{margin:0 0 4px 0}
+  .meta{color:var(--muted);margin:6px 0 14px}
+  /* Tabs */
+  .tabs{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 14px}
+  .tab{
+    background:var(--chip); border:1px solid var(--border); color:#dfe7ff;
+    padding:9px 12px;border-radius:10px; cursor:pointer; user-select:none;
+  }
+  .tab.active{background:linear-gradient(135deg,#24335b,#1a2748); border-color:#355296}
+  /* Panels */
+  .panel{background:var(--panel); border:1px solid var(--border); border-radius:14px; padding:12px}
+  /* CRM table */
   .toolbar{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0 14px}
-  .small{font-size:12px;color:#9fb0d1}
+  input[type=search], .btn, select{
+    background:#121a2d;border:1px solid var(--border);color:var(--text);
+    padding:8px 10px;border-radius:8px;outline:none;font-size:14px
+  }
+  .btn{cursor:pointer}
+  .btn:hover{background:#162041}
+  .table-wrap{overflow:auto;border:1px solid var(--border);border-radius:14px}
+  table{border-collapse:collapse; width:100%; min-width:950px; background:#0f1422}
+  th,td{border-bottom:1px solid var(--border); padding:10px 12px; text-align:left; font-size:14px; vertical-align:top}
+  th{background:#121a2d;color:#cfe0ff; position:sticky; top:0; z-index:2}
+  tr:hover td{background:rgba(124,155,255,.08)}
+  .Dream td{background:var(--dream)}
+  .Target td{background:var(--target)}
+  .Safety td{background:var(--safety)}
+  .USWildcard td{background:var(--uswild)}
+  td[contenteditable=true]{outline:none;border-radius:6px}
+  td[contenteditable=true]:focus{box-shadow:0 0 0 2px #5167ff77 inset;background:rgba(81,103,255,.08)}
+  .pill{display:inline-block;padding:4px 8px;border:1px solid var(--border);border-radius:999px;background:var(--chip);font-size:12px;color:#cfe0ff}
+  .small{font-size:12px;color:var(--muted)}
+
+  /* Planner */
+  .planner-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  @media (max-width: 900px){ .planner-grid{grid-template-columns:1fr} }
+  .card{background:#101730;border:1px solid var(--border);border-radius:14px;padding:12px}
+  .card h3{margin:0 0 8px 0}
+  .row{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+  .row > *{flex:1 1 160px}
+  .row .btn{flex:0 0 auto}
+  .item{
+    display:flex;gap:10px;align-items:center;justify-content:space-between;
+    background:var(--chip);border:1px solid var(--border);padding:10px;border-radius:10px;margin:8px 0
+  }
+  .label{display:flex;flex-direction:column;gap:3px}
+  .label .school{font-weight:600}
+  .label .meta{font-size:12px;color:#cbd6f5}
+  .actions{display:flex;gap:8px;flex-wrap:wrap}
+  .ok{color:#22c55e}.warn{color:#f59e0b}.danger{color:#ef4444}
+  .counter{font-size:12px}
 </style>
+</head>
+<body>
+
+<h1>MBA CRM + Elective Planner</h1>
+<div class="meta">Generated 2025-08-12 • Full-time MBAs only. Data saves locally in your browser.</div>
+
+<!-- Tabs -->
+<div class="tabs">
+  <div class="tab active" data-tab="crm">School CRM</div>
+  <div class="tab" data-tab="planner">Elective Planner</div>
+</div>
+
+<!-- CRM PANEL -->
+<section id="crm" class="panel">
+  <div class="toolbar">
+    <input id="q" type="search" placeholder="Search… (school, country, notes)">
+    <select id="filter-country">
+      <option value="">All countries</option>
+      <option>Spain</option><option>Italy</option><option>Netherlands</option><option>Germany</option>
+      <option>United Kingdom</option><option>France</option><option>Sweden</option><option>United States</option>
+    </select>
+    <select id="filter-category">
+      <option value="">All categories</option>
+      <option>Dream</option>
+      <option>Target</option>
+      <option>Safety</option>
+      <option>US Wildcard</option>
+    </select>
+    <button id="export" class="btn">Export CSV</button>
+  </div>
+
+  <div class="table-wrap">
+    <table id="crm-table">
+      <thead>
+        <tr>
+          <th>School Name</th>
+          <th>Country</th>
+          <th>Category</th>
+          <th>Duration</th>
+          <th>Average / Median GMAT</th>
+          <th>Application Deadlines (2025–26 cycle)</th>
+          <th>Notes</th>
+          <th>Max Electives (per program)</th> <!-- NEW -->
+          <th>Electives (leave blank)</th>
+          <th>Alumni You Can Contact (leave blank)</th>
+          <th>LinkedIn Contact from AdComms</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Your existing rows with one extra empty <td> for max electives (8th col) -->
+        <tr class='Dream'><td contenteditable="true">IESE Business School</td><td><span class="pill">Spain</span></td><td contenteditable="true">Dream</td><td contenteditable="true">15 or 19 months</td><td contenteditable="true">No official average; GMAT acceptance range 545–715 (Focus) / 580–750 (Classic)</td><td contenteditable="true">R1: 25 Sep 2025 • R2: 9 Jan 2026 • R3: 12 Mar 2026 • R4*: 8 May 2026</td><td contenteditable="true">*R4 typically for EU passport holders or visa-exempt; check IESE site</td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td></tr>
+        <tr class='Dream'><td contenteditable="true">University of Oxford – Saïd</td><td><span class="pill">United Kingdom</span></td><td contenteditable="true">Dream</td><td contenteditable="true">12 months</td><td contenteditable="true">Median GMAT: 680</td><td contenteditable="true">Stage 1: 1 Sep 2025 • Stage 2: 1 Oct 2025 • Stage 3: 3 Nov 2025 • Stage 4: 7 Jan 2026 • Stage 5: 16 Mar 2026</td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td></tr>
+        <tr class='Dream'><td contenteditable="true">University of Cambridge – Judge</td><td><span class="pill">United Kingdom</span></td><td contenteditable="true">Dream</td><td contenteditable="true">12 months</td><td contenteditable="true">Average GMAT: 697</td><td contenteditable="true">R2: 6 Oct 2025 • R3: 5 Jan 2026 • R4: 30 Mar 2026 • R5: 5 May 2026</td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td></tr>
+        <tr class='Target'><td contenteditable="true">IE Business School</td><td><span class="pill">Spain</span></td><td contenteditable="true">Target</td><td contenteditable="true">11–15 months</td><td contenteditable="true">Average GMAT: ~680</td><td contenteditable="true">Rolling admissions (examples: final day for Sep 2025 start—1 Sep 2025; Jan 2026 start—30 Dec 2025)</td><td contenteditable="true">Apply early for scholarships; seats fill on a rolling basis</td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td></tr>
+        <tr class='Target'><td contenteditable="true">SDA Bocconi</td><td><span class="pill">Italy</span></td><td contenteditable="true">Target</td><td contenteditable="true">12 months</td><td contenteditable="true">Average GMAT: ~650–665</td><td contenteditable="true">R1: 4 Nov 2025 • R2: 13 Jan 2026 • R3: 3 Mar 2026 • R4: 15 Apr 2026</td><td contenteditable="true">Application deadline for 2026 intake: 15 Apr 2026</td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td></tr>
+        <tr class='Target'><td contenteditable="true">Rotterdam School of Management (RSM)</td><td><span class="pill">Netherlands</span></td><td contenteditable="true">Target</td><td contenteditable="true">12 months</td><td contenteditable="true">Average GMAT: ~640</td><td contenteditable="true">Jan 2026 intake rounds: 11 Feb • 8 Apr • 3 Jun • 12 Aug • 1 Oct • 4 Nov 2025</td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td></tr>
+        <tr class='Target'><td contenteditable="true">Imperial College Business School</td><td><span class="pill">United Kingdom</span></td><td contenteditable="true">Target</td><td contenteditable="true">12 months</td><td contenteditable="true">Average GMAT: ~660 (school does not publish)</td><td contenteditable="true">23 Sep 2025 • 13 Jan 2026 • 17 Mar 2026 • 28 Apr 2026</td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td></tr>
+        <tr class='Target'><td contenteditable="true">ESSEC Business School (Global MBA)</td><td><span class="pill">France</span></td><td contenteditable="true">Target</td><td contenteditable="true">12 months</td><td contenteditable="true">Average GMAT Focus (equiv): ~615</td><td contenteditable="true">Apps accepted through Jun 2026; Early Bird: 6 Oct 2025</td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td></tr>
+        <tr class='Safety'><td contenteditable="true">Warwick Business School</td><td><span class="pill">United Kingdom</span></td><td contenteditable="true">Safety</td><td contenteditable="true">12 months</td><td contenteditable="true">Average GMAT: 670 (615 Focus)</td><td contenteditable="true">2026 cycle TBA; 2025 example rounds: 6 Oct • 10 Nov • 12 Jan • 30 Mar • 21 May (Intl) • 31 Jul</td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td></tr>
+        <tr class='Safety'><td contenteditable="true">ESADE Barcelona</td><td><span class="pill">Spain</span></td><td contenteditable="true">Safety</td><td contenteditable="true">12 / 15 / 18 months</td><td contenteditable="true">Average GMAT: ~660 (615 Focus)</td><td contenteditable="true">2026 cycle TBA; 2024–25 rounds ran Oct–Jun monthly (9 rounds)</td><td contenteditable="true">Expect similar cadence; verify when 2026 calendar posts</td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td></tr>
+        <tr class='Safety'><td contenteditable="true">ESMT Berlin</td><td><span class="pill">Germany</span></td><td contenteditable="true">Safety</td><td contenteditable="true">15 months</td><td contenteditable="true">Average GMAT: ~640</td><td contenteditable="true">Jan 2026 intake timeline: R1 28 Feb 2025 • R2 11 Apr 2025 • R3 30 May 2025 • Visa cutoff 22 Aug 2025 • Final 14 Nov 2025</td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td></tr>
+        <tr class='Safety'><td contenteditable="true">Stockholm School of Economics (SSE) – MBA</td><td><span class="pill">Sweden</span></td><td contenteditable="true">Safety</td><td contenteditable="true">~12 months (intensive / exec-style)</td><td contenteditable="true">GMAT: not required; not published</td><td contenteditable="true">Rolling; decisions end-May/Jun/Aug/Sep/Oct (next start Jan)</td><td contenteditable="true">Program branded as Executive MBA; confirm fit vs full-time MBA</td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td></tr>
+        <tr class='USWildcard'><td contenteditable="true">Michigan Ross School of Business</td><td><span class="pill">United States</span></td><td contenteditable="true">US Wildcard</td><td contenteditable="true">24 months</td><td contenteditable="true">Average GMAT: 728</td><td contenteditable="true">R1: 8 Sep 2025 • R2: 5 Jan 2026 • R3: 23 Mar 2026</td><td contenteditable="true">Apps due 11:59pm ET on deadlines</td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="small">Tip: Click any cell to edit. Your changes auto-save locally. Export CSV anytime.</p>
+</section>
+
+<!-- PLANNER PANEL -->
+<section id="planner" class="panel" style="display:none">
+  <div class="planner-grid">
+    <div class="card">
+      <h3>Electives — Considering</h3>
+      <div class="row">
+        <select id="pl-school"></select>
+        <input id="pl-category" type="text" placeholder="Broad category (e.g., Strategy & Geopolitics)">
+        <input id="pl-title" type="text" placeholder="Elective title (exact, from brochure)">
+        <input id="pl-notes" type="text" placeholder="Notes (why relevant, prof, term)">
+        <button class="btn" id="pl-add">Add</button>
+      </div>
+      <div id="considering"></div>
+    </div>
+    <div class="card">
+      <h3>Electives — Chosen</h3>
+      <p class="small">Counters respect each school’s <b>Max Electives</b> set in the CRM (soft limit).</p>
+      <div id="chosen"></div>
+    </div>
+  </div>
+  <div class="row" style="margin-top:10px">
+    <button class="btn" id="export-planner">Export Planner JSON</button>
+    <label class="btn">Import JSON<input id="import-json" type="file" accept="application/json" style="display:none"></label>
+    <button class="btn" id="clear-planner">Clear Planner</button>
+  </div>
+</section>
+
 <script>
+/* ---------- Tab logic ---------- */
+document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click', ()=>{
+  document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+  t.classList.add('active');
+  const id = t.dataset.tab;
+  document.getElementById('crm').style.display = (id==='crm')?'block':'none';
+  document.getElementById('planner').style.display = (id==='planner')?'block':'none';
+}));
+
+/* ---------- CRM: editing, filters, CSV, autosave ---------- */
 function enableEditing(){
-  document.querySelectorAll('td').forEach(td=>{
+  document.querySelectorAll('#crm-table td[contenteditable="true"]').forEach(td=>{
     td.addEventListener('click', ()=>{
       if(td.querySelector('input')) return;
       const v = td.innerText;
       const i = document.createElement('input');
       i.value=v; i.style.width='100%'; i.style.background='transparent'; i.style.color='inherit';
-      i.style.border='1px solid #22304c'; i.style.borderRadius='6px'; i.style.padding='6px 8px';
+      i.style.border='1px solid var(--border)'; i.style.borderRadius='6px'; i.style.padding='6px 8px';
       td.innerHTML=''; td.appendChild(i); i.focus();
-      i.addEventListener('blur', ()=>{ td.innerHTML=i.value; autosave(); });
-      i.addEventListener('keydown', e=>{ if(e.key==='Enter') i.blur(); if(e.key==='Escape') td.innerHTML=v; });
+      i.addEventListener('blur', ()=>{ td.innerHTML=i.value; autosaveCRM(); refreshPlannerSchoolOptions(); });
+      i.addEventListener('keydown', e=>{ if(e.key==='Enter') i.blur(); if(e.key==='Escape'){ td.innerHTML=v; autosaveCRM(); }});
     });
   });
 }
-const KEY='mba_crm_exact_v1';
-function autosave(){
-  const rows=[...document.querySelectorAll('tbody tr')].map(tr=>[...tr.children].map(td=>td.innerHTML));
-  localStorage.setItem(KEY, JSON.stringify(rows));
+const KEY_CRM='mba_crm_sheet_v4';
+function autosaveCRM(){
+  const rows=[...document.querySelectorAll('#crm-table tbody tr')].map(tr=>
+    [...tr.children].map(td=>{
+      // store text only (avoid nested spans ambiguity)
+      return td.querySelector('.pill') ? td.querySelector('.pill').innerText : td.innerText;
+    })
+  );
+  localStorage.setItem(KEY_CRM, JSON.stringify(rows));
 }
-function loadsave(){
-  const raw=localStorage.getItem(KEY); if(!raw) return;
-  const rows=JSON.parse(raw); const trs=document.querySelectorAll('tbody tr');
-  rows.forEach((cells,i)=>{ const tr=trs[i]; if(!tr) return; cells.forEach((v,j)=> tr.children[j].innerHTML=v ); });
+function loadCRM(){
+  const raw=localStorage.getItem(KEY_CRM); if(!raw) return;
+  const data=JSON.parse(raw);
+  const trs=document.querySelectorAll('#crm-table tbody tr');
+  data.forEach((cells,i)=>{
+    const tr=trs[i]; if(!tr) return;
+    cells.forEach((v,j)=>{
+      if(j===1){ tr.children[j].innerHTML = '<span class="pill">'+v+'</span>'; }
+      else tr.children[j].innerHTML = v;
+    });
+  });
 }
 function filter(){
   const q=document.getElementById('q').value.toLowerCase().trim();
-  document.querySelectorAll('tbody tr').forEach(tr=>{
-    const t=tr.innerText.toLowerCase(); tr.style.display = t.includes(q)?'':'none';
+  const country=document.getElementById('filter-country').value;
+  const cat=document.getElementById('filter-category').value.toLowerCase();
+  document.querySelectorAll('#crm-table tbody tr').forEach(tr=>{
+    const text=tr.innerText.toLowerCase();
+    let ok = !q || text.includes(q);
+    if(country){ ok = ok && tr.children[1].innerText.trim()===country; }
+    if(cat){ ok = ok && tr.children[2].innerText.toLowerCase().trim()===cat; }
+    tr.style.display = ok ? '' : 'none';
   });
 }
 function exportCSV(){
   const rows = [];
-  const table = document.querySelector('table');
+  const table = document.querySelector('#crm-table');
   table.querySelectorAll('tr').forEach(tr=>{
     const cols = [];
     tr.querySelectorAll('th,td').forEach(td=>{
@@ -63,43 +254,156 @@ function exportCSV(){
   });
   const blob = new Blob([rows.join('\n')], {type:'text/csv;charset=utf-8;'});
   const url = URL.createObjectURL(blob);
-  const a=document.createElement('a'); a.href=url; a.download='MBA_CRM_Exact_Deadlines.csv'; a.click(); URL.revokeObjectURL(url);
+  const a=document.createElement('a'); a.href=url; a.download='MBA_CRM.csv'; a.click(); URL.revokeObjectURL(url);
 }
-window.addEventListener('load', ()=>{ loadsave(); enableEditing(); document.getElementById('q').addEventListener('input', filter); document.getElementById('export').addEventListener('click', exportCSV); });
-</script>
-</head>
-<body>
-<h1>MBA Application CRM — Exact Deadlines & GMAT</h1>
-<div class="meta">Generated 2025-08-11 • Official dates/figures where available; otherwise most recent published cycle or school‑stated patterns.</div>
-<div class="toolbar">
-  <input id="q" type="search" placeholder="Search… (school, country, notes)">
-  <button id="export" class="btn">Export CSV</button>
-</div>
-<table>
-<thead>
-<tr>
-  <th>School Name</th><th>Country</th><th>Category</th><th>Duration</th>
-  <th>Average / Median GMAT</th><th>Application Deadlines (2025–26 cycle)</th><th>Notes</th>
-  <th>Electives (leave blank)</th><th>Alumni You Can Contact (leave blank)</th><th>LinkedIn Contact from AdComms</th>
-</tr>
-</thead>
-<tbody>
-<tr class='Dream'><td>IESE Business School</td><td>Spain</td><td>Dream</td><td>15 or 19 months</td><td>No official average; GMAT acceptance range 545–715 (Focus) / 580–750 (Classic)</td><td>R1: 25 Sep 2025 • R2: 9 Jan 2026 • R3: 12 Mar 2026 • R4*: 8 May 2026</td><td>*R4 typically for EU passport holders or visa‑exempt; check IESE site</td><td></td><td></td><td></td></tr>
-<tr class='Dream'><td>University of Oxford – Saïd</td><td>United Kingdom</td><td>Dream</td><td>12 months</td><td>Median GMAT: 680</td><td>Stage 1: 1 Sep 2025 • Stage 2: 1 Oct 2025 • Stage 3: 3 Nov 2025 • Stage 4: 7 Jan 2026 • Stage 5: 16 Mar 2026</td><td></td><td></td><td></td><td></td></tr>
-<tr class='Dream'><td>University of Cambridge – Judge</td><td>United Kingdom</td><td>Dream</td><td>12 months</td><td>Average GMAT: 697</td><td>R2: 6 Oct 2025 • R3: 5 Jan 2026 • R4: 30 Mar 2026 • R5: 5 May 2026</td><td></td><td></td><td></td><td></td></tr>
-<tr class='Target'><td>IE Business School</td><td>Spain</td><td>Target</td><td>11–15 months</td><td>Average GMAT: ~680</td><td>Rolling admissions (examples: final day for Sep 2025 start—1 Sep 2025; Jan 2026 start—30 Dec 2025)</td><td>Apply early for scholarships; seats fill on a rolling basis</td><td></td><td></td><td></td></tr>
-<tr class='Target'><td>SDA Bocconi</td><td>Italy</td><td>Target</td><td>12 months</td><td>Average GMAT: ~650–665</td><td>R1: 4 Nov 2025 • R2: 13 Jan 2026 • R3: 3 Mar 2026 • R4: 15 Apr 2026</td><td>Application deadline for 2026 intake: 15 Apr 2026</td><td></td><td></td><td></td></tr>
-<tr class='Target'><td>Rotterdam School of Management (RSM)</td><td>Netherlands</td><td>Target</td><td>12 months</td><td>Average GMAT: ~640</td><td>Jan 2026 intake rounds: 11 Feb • 8 Apr • 3 Jun • 12 Aug • 1 Oct • 4 Nov 2025</td><td></td><td></td><td></td><td></td></tr>
-<tr class='Target'><td>Imperial College Business School</td><td>United Kingdom</td><td>Target</td><td>12 months</td><td>Average GMAT: ~660 (school does not publish)</td><td>23 Sep 2025 • 13 Jan 2026 • 17 Mar 2026 • 28 Apr 2026</td><td></td><td></td><td></td><td></td></tr>
-<tr class='Target'><td>ESSEC Business School (Global MBA)</td><td>France</td><td>Target</td><td>12 months</td><td>Average GMAT Focus (equiv): ~615</td><td>Apps accepted through Jun 2026; Early Bird: 6 Oct 2025</td><td></td><td></td><td></td><td></td></tr>
-<tr class='Safety'><td>Warwick Business School</td><td>United Kingdom</td><td>Safety</td><td>12 months</td><td>Average GMAT: 670 (615 Focus)</td><td>2026 cycle TBA; 2025 example rounds: 6 Oct • 10 Nov • 12 Jan • 30 Mar • 21 May (Intl) • 31 Jul</td><td></td><td></td><td></td><td></td></tr>
-<tr class='Safety'><td>ESADE Barcelona</td><td>Spain</td><td>Safety</td><td>12 / 15 / 18 months</td><td>Average GMAT: ~660 (615 Focus)</td><td>2026 cycle TBA; 2024–25 rounds ran Oct–Jun monthly (9 rounds)</td><td>Expect similar cadence; verify when 2026 calendar posts</td><td></td><td></td><td></td></tr>
-<tr class='Safety'><td>ESMT Berlin</td><td>Germany</td><td>Safety</td><td>15 months</td><td>Average GMAT: ~640</td><td>Jan 2026 intake timeline: R1 28 Feb 2025 • R2 11 Apr 2025 • R3 30 May 2025 • Visa cutoff 22 Aug 2025 • Final 14 Nov 2025</td><td></td><td></td><td></td><td></td></tr>
-<tr class='Safety'><td>Stockholm School of Economics (SSE) – MBA</td><td>Sweden</td><td>Safety</td><td>~12 months (intensive / exec-style)</td><td>GMAT: not required; not published</td><td>Rolling; decisions end‑May/Jun/Aug/Sep/Oct (next start Jan)</td><td>Program branded as Executive MBA; confirm fit vs full‑time MBA</td><td></td><td></td><td></td></tr>
-<tr class='USWildcard'><td>Michigan Ross School of Business</td><td>United States</td><td>US Wildcard</td><td>24 months</td><td>Average GMAT: 728</td><td>R1: 8 Sep 2025 • R2: 5 Jan 2026 • R3: 23 Mar 2026</td><td>Apps due 11:59pm ET on deadlines</td><td></td><td></td><td></td></tr>
+window.addEventListener('load', ()=>{
+  loadCRM(); enableEditing(); 
+  document.getElementById('q').addEventListener('input', filter);
+  document.getElementById('filter-country').addEventListener('input', filter);
+  document.getElementById('filter-category').addEventListener('input', filter);
+  document.getElementById('export').addEventListener('click', exportCSV);
+  refreshPlannerSchoolOptions(); renderLists();
+});
 
-</tbody>
-</table>
-<p class="small">Tip: Click any cell to edit. Your changes auto‑save in your browser (localStorage). Use Export to download a CSV backup.</p>
+/* ---------- Planner: uses CRM school list + per-school Max Electives ---------- */
+const PK_CONSIDERING='electives_considering_v2';
+const PK_CHOSEN='electives_chosen_v2';
+
+function getCRMRows(){
+  return [...document.querySelectorAll('#crm-table tbody tr')].map(tr=>[...tr.children].map(td=>td.innerText));
+}
+function refreshPlannerSchoolOptions(){
+  const sel=document.getElementById('pl-school');
+  if(!sel) return;
+  const names = getCRMRows().map(r=>r[0].trim()).filter(Boolean);
+  sel.innerHTML = names.map(n=>`<option>${n}</option>`).join('');
+}
+function maxForSchool(name){
+  const rows=getCRMRows();
+  for(const r of rows){
+    if(r[0].trim()===name.trim()){
+      const raw=r[7]?.trim(); // index 7 = "Max Electives" column
+      const n=parseInt(raw,10);
+      return isNaN(n)?null:n;
+    }
+  }
+  return null;
+}
+function countsForSchool(name, chosen){
+  return chosen.filter(x=>x.school===name).length;
+}
+function softLimitLabel(name, chosen){
+  const max=maxForSchool(name);
+  const cnt=countsForSchool(name, chosen);
+  if(max==null) return `<span class="counter">Max: —</span>`;
+  if(cnt<max) return `<span class="counter ok">Chosen ${cnt} / ${max}</span>`;
+  if(cnt===max) return `<span class="counter warn">Chosen ${cnt} / ${max} (full)</span>`;
+  return `<span class="counter danger">Over by ${cnt-max}</span>`;
+}
+function renderLists(){
+  const ctnC=document.getElementById('considering');
+  const ctnH=document.getElementById('chosen');
+  const considering=JSON.parse(localStorage.getItem(PK_CONSIDERING)||'[]');
+  const chosen=JSON.parse(localStorage.getItem(PK_CHOSEN)||'[]');
+
+  function card(it, list){
+    return `
+      <div class="item" data-school="${it.school}" data-category="${it.category}" data-title="${it.title}">
+        <div class="label">
+          <div class="school">${it.school}</div>
+          <div class="meta">${it.category} • ${it.title}</div>
+          <div class="small">${it.notes||""}</div>
+          <div class="small">${softLimitLabel(it.school, chosen)}</div>
+        </div>
+        <div class="actions">
+          ${list==='considering' ? '<button class="btn" data-move="to-chosen">Choose</button>' : '<button class="btn" data-move="to-considering">Unchoose</button>'}
+          <button class="btn" data-del="1">Delete</button>
+        </div>
+      </div>
+    `;
+  }
+
+  ctnC.innerHTML = considering.length ? considering.map(it=>card(it,'considering')).join('') : '<p class="small">No electives yet — add them above.</p>';
+  ctnH.innerHTML = chosen.length ? chosen.map(it=>card(it,'chosen')).join('') : '<p class="small">Nothing chosen yet.</p>';
+
+  function bind(container, listName){
+    container.querySelectorAll('.item').forEach((node, idx)=>{
+      node.querySelectorAll('button').forEach(btn=>{
+        if(btn.dataset.del){
+          btn.addEventListener('click', ()=>{
+            const key = (listName==='considering')?PK_CONSIDERING:PK_CHOSEN;
+            const arr = JSON.parse(localStorage.getItem(key)||'[]');
+            arr.splice(idx,1); localStorage.setItem(key, JSON.stringify(arr)); renderLists();
+          });
+        }else if(btn.dataset.move){
+          btn.addEventListener('click', ()=>{
+            const srcKey = (listName==='considering')?PK_CONSIDERING:PK_CHOSEN;
+            const dstKey = (listName==='considering')?PK_CHOSEN:PK_CONSIDERING;
+            const src = JSON.parse(localStorage.getItem(srcKey)||'[]');
+            const dst = JSON.parse(localStorage.getItem(dstKey)||'[]');
+            const item = src.splice(idx,1)[0];
+            dst.push(item);
+            localStorage.setItem(srcKey, JSON.stringify(src));
+            localStorage.setItem(dstKey, JSON.stringify(dst));
+            renderLists();
+          });
+        }
+      });
+    });
+  }
+  bind(ctnC, 'considering');
+  bind(ctnH, 'chosen');
+}
+
+document.getElementById('pl-add').addEventListener('click', ()=>{
+  const school=document.getElementById('pl-school').value.trim();
+  const category=document.getElementById('pl-category').value.trim();
+  const title=document.getElementById('pl-title').value.trim();
+  const notes=document.getElementById('pl-notes').value.trim();
+  if(!school||!category||!title){ alert('Please fill School, Category, and Elective title.'); return; }
+  const arr=JSON.parse(localStorage.getItem(PK_CONSIDERING)||'[]');
+  arr.push({school, category, title, notes});
+  localStorage.setItem(PK_CONSIDERING, JSON.stringify(arr));
+  document.getElementById('pl-title').value=''; document.getElementById('pl-notes').value='';
+  renderLists();
+});
+
+document.getElementById('export-planner').addEventListener('click', ()=>{
+  const data = {
+    considering: JSON.parse(localStorage.getItem(PK_CONSIDERING)||'[]'),
+    chosen: JSON.parse(localStorage.getItem(PK_CHOSEN)||'[]')
+  };
+  const blob = new Blob([JSON.stringify(data,null,2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a=document.createElement('a'); a.href=url; a.download='ElectivePlanner.json'; a.click(); URL.revokeObjectURL(url);
+});
+document.getElementById('import-json').addEventListener('change', (e)=>{
+  const file=e.target.files[0]; if(!file) return;
+  const reader=new FileReader();
+  reader.onload=()=>{
+    try{
+      const data=JSON.parse(reader.result);
+      if(data.considering) localStorage.setItem(PK_CONSIDERING, JSON.stringify(data.considering));
+      if(data.chosen) localStorage.setItem(PK_CHOSEN, JSON.stringify(data.chosen));
+      renderLists(); alert('Planner data imported.');
+    }catch(err){ alert('Invalid JSON'); }
+  };
+  reader.readAsText(file);
+});
+document.getElementById('clear-planner').addEventListener('click', ()=>{
+  if(confirm('Clear all electives in planner?')){
+    localStorage.removeItem(PK_CONSIDERING);
+    localStorage.removeItem(PK_CHOSEN);
+    renderLists();
+  }
+});
+
+/* Search + keyboard focus */
+document.addEventListener('keydown', e=>{
+  if(e.key==='/' && document.activeElement.tagName!=='INPUT' && document.activeElement.tagName!=='TEXTAREA'){
+    e.preventDefault(); document.getElementById('q').focus();
+  }
+});
+</script>
 </body>
 </html>
