@@ -1,741 +1,656 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MBA CRM + Elective Planner + Essay Questions</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Tailwind CSS CDN for styling -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        :root{
-            --bg:#0b0e16; --panel:#0f1422; --elev:#121a2d; --muted:#9fb0d1; --text:#eaf0ff;
-            --border:#22304c; --chip:#151c2c; --accent:#7c9bff;
-            --dream: rgba(255,127,150,.12); --target: rgba(255,214,102,.12);
-            --safety: rgba(119,255,170,.12); --uswild: rgba(124,155,255,.12);
-        }
-        body {
-            font-family: 'Inter', sans-serif;
-            color: var(--text);
-            background: radial-gradient(900px 600px at 10% -10%, #0f1a33 0%, rgba(15,26,51,0) 60%),
-                        linear-gradient(180deg,#0b0e16,#0b1222 40%, #0a0f1a 100%);
-            padding: 1rem;
-            min-height: 100vh;
-        }
-        .tab.active {
-            background: linear-gradient(135deg,#24335b,#1a2748);
-            border-color: #355296;
-        }
-        .pill {
-            background-color: var(--chip);
-        }
-        .card h3 {
-            margin: 0;
-        }
-        .table-wrap {
-            overflow-x: auto;
-        }
-        table {
-            min-width: 1200px; /* Adjusted width for the new column */
-        }
-        th {
-            position: sticky;
-            top: 0;
-            z-index: 10;
-        }
-        tr:hover td {
-            background: rgba(124,155,255,.08);
-        }
-        .Dream td { background: var(--dream); }
-        .Target td { background: var(--target); }
-        .Safety td { background: var(--safety); }
-        .USWildcard td { background: var(--uswild); }
-        
-        td[contenteditable=true]:focus {
-            box-shadow: 0 0 0 2px #5167ff77 inset;
-            background: rgba(81,103,255,.08);
-        }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>MBA CRM + Elective Planner + Essay Questions</title>
 
-        .planner-grid {
-            grid-template-columns: 1fr;
-        }
-        @media (min-width: 900px) {
-            .planner-grid {
-                grid-template-columns: 1fr 1fr;
-            }
-        }
-    </style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+
+<style>
+  :root{
+    --bg:#0b0e16; --panel:#0f1422; --elev:#121a2d; --muted:#9fb0d1; --text:#eaf0ff;
+    --border:#22304c; --chip:#151c2c; --dream: rgba(255,127,150,.12);
+    --target: rgba(255,214,102,.12); --safety: rgba(119,255,170,.12); --uswild: rgba(124,155,255,.12);
+  }
+  body{font-family:'Inter',sans-serif;color:var(--text);background:radial-gradient(900px 600px at 10% -10%, #0f1a33 0%, rgba(15,26,51,0) 60%),linear-gradient(180deg,#0b0e16,#0b1222 40%,#0a0f1a 100%);padding:1rem;min-height:100vh}
+  .pill{background:var(--chip);padding:.15rem .5rem;border-radius:999px}
+  .tab.active{background:linear-gradient(135deg,#24335b,#1a2748);border-color:#355296}
+  .table-wrap{overflow-x:auto}
+  table{min-width:1200px}
+  thead th{position:sticky;top:0;z-index:5}
+  tbody tr:hover td{background:rgba(124,155,255,.08)}
+  .Dream td{background:var(--dream)} .Target td{background:var(--target)}
+  .Safety td{background:var(--safety)} .USWildcard td{background:var(--uswild)}
+  td[contenteditable="true"]:focus{box-shadow:0 0 0 2px #5167ff77 inset;background:rgba(81,103,255,.08)}
+</style>
 </head>
+
 <body class="bg-gray-900 text-gray-100">
-
 <div class="max-w-7xl mx-auto p-4">
-    <h1 class="text-3xl font-bold mb-1">MBA CRM + Elective Planner + Essay Questions</h1>
-    <div class="text-gray-400 mb-4 text-sm">Generated 2025-08-12 • Full-time MBAs • All data saved locally (localStorage).</div>
+  <h1 class="text-3xl font-bold mb-1">MBA CRM + Elective Planner + Essay Questions</h1>
+  <div class="text-gray-400 mb-4 text-sm">Full-time MBAs • Your edits auto-save locally.</div>
 
-    <div id="app-tabs" class="flex flex-wrap gap-2 mb-6">
-        <div class="tab bg-slate-800 border border-slate-700 text-gray-200 px-4 py-2 rounded-lg cursor-pointer transition-colors duration-200 hover:bg-slate-700 active" data-tab="crm">School CRM</div>
-        <div class="tab bg-slate-800 border border-slate-700 text-gray-200 px-4 py-2 rounded-lg cursor-pointer transition-colors duration-200 hover:bg-slate-700" data-tab="planner">Elective Planner</div>
-        <div class="tab bg-slate-800 border border-slate-700 text-gray-200 px-4 py-2 rounded-lg cursor-pointer transition-colors duration-200 hover:bg-slate-700" data-tab="essay">Essay Questions</div>
+  <!-- Tabs -->
+  <div id="app-tabs" class="flex flex-wrap gap-2 mb-6">
+    <button class="tab bg-slate-800 border border-slate-700 text-gray-200 px-4 py-2 rounded-lg cursor-pointer hover:bg-slate-700 active" data-tab="crm">School CRM</button>
+    <button class="tab bg-slate-800 border border-slate-700 text-gray-200 px-4 py-2 rounded-lg cursor-pointer hover:bg-slate-700" data-tab="planner">Elective Planner</button>
+    <button class="tab bg-slate-800 border border-slate-700 text-gray-200 px-4 py-2 rounded-lg cursor-pointer hover:bg-slate-700" data-tab="essay">Essay Questions</button>
+  </div>
+
+  <!-- CRM -->
+  <section id="crm" class="bg-slate-800 border border-slate-700 rounded-xl p-4">
+    <div class="flex flex-wrap gap-2 mb-4 items-center">
+      <input id="q" type="search" placeholder="Search… (school, country, notes)" class="flex-1 min-w-0 p-2 rounded-lg bg-slate-900 border border-slate-700 text-gray-100 placeholder-gray-500">
+      <select id="filter-country" class="p-2 rounded-lg bg-slate-900 border border-slate-700 text-gray-100">
+        <option value="">All countries</option>
+        <option>Spain</option><option>Italy</option><option>Netherlands</option><option>Germany</option>
+        <option>United Kingdom</option><option>France</option><option>Sweden</option><option>United States</option>
+      </select>
+      <select id="filter-category" class="p-2 rounded-lg bg-slate-900 border border-slate-700 text-gray-100">
+        <option value="">All categories</option>
+        <option>Dream</option><option>Target</option><option>Safety</option><option>US Wildcard</option>
+      </select>
+      <button id="fill-features" class="bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2 rounded-lg">Fill Features</button>
+      <button id="export" class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-4 py-2 rounded-lg">Export CSV</button>
     </div>
 
-    <!-- CRM -->
-    <section id="crm" class="bg-slate-800 border border-slate-700 rounded-xl p-4">
-        <div class="flex flex-wrap gap-2 mb-4 items-center">
-            <input id="q" type="search" placeholder="Search… (school, country, notes)" class="flex-1 min-w-0 p-2 rounded-lg bg-slate-900 border border-slate-700 text-gray-100 placeholder-gray-500">
-            <select id="filter-country" class="p-2 rounded-lg bg-slate-900 border border-slate-700 text-gray-100">
-                <option value="">All countries</option>
-                <option>Spain</option><option>Italy</option><option>Netherlands</option><option>Germany</option>
-                <option>United Kingdom</option><option>France</option><option>Sweden</option><option>United States</option>
-            </select>
-            <select id="filter-category" class="p-2 rounded-lg bg-slate-900 border border-slate-700 text-gray-100">
-                <option value="">All categories</option>
-                <option>Dream</option><option>Target</option><option>Safety</option><option>US Wildcard</option>
-            </select>
-            <button id="fetch-features-btn" class="bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2 rounded-lg transition-colors duration-200">
-                <span id="fetch-text">Fetch Features</span>
-                <svg id="fetch-spinner" class="animate-spin h-5 w-5 text-white hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-            </button>
-            <button id="export" class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-4 py-2 rounded-lg transition-colors duration-200">Export CSV</button>
-        </div>
+    <div class="table-wrap">
+      <table id="crm-table" class="w-full text-sm">
+        <thead class="bg-slate-900 text-gray-300">
+          <tr>
+            <th class="p-3 text-left border-b border-slate-700">School Name</th>
+            <th class="p-3 text-left border-b border-slate-700">Country</th>
+            <th class="p-3 text-left border-b border-slate-700">Category</th>
+            <th class="p-3 text-left border-b border-slate-700">Features (USP)</th>
+            <th class="p-3 text-left border-b border-slate-700">Duration</th>
+            <th class="p-3 text-left border-b border-slate-700">Average / Median GMAT</th>
+            <th class="p-3 text-left border-b border-slate-700">Application Deadlines (2025–26 cycle)</th>
+            <th class="p-3 text-left border-b border-slate-700">Notes</th>
+            <th class="p-3 text-left border-b border-slate-700">Max Electives (per program)</th>
+            <th class="p-3 text-left border-b border-slate-700">Electives (leave blank)</th>
+            <th class="p-3 text-left border-b border-slate-700">Alumni You Can Contact (leave blank)</th>
+            <th class="p-3 text-left border-b border-slate-700">LinkedIn Contact from AdComms</th>
+          </tr>
+        </thead>
+        <tbody class="bg-slate-800">
+          <tr class="Dream">
+            <td contenteditable="true" class="p-3 border-b border-slate-700">IESE Business School</td>
+            <td class="p-3 border-b border-slate-700"><span class="pill">Spain</span></td>
+            <td contenteditable="true" class="p-3 border-b border-slate-700">Dream</td>
+            <td contenteditable="true" class="p-3 border-b border-slate-700"></td>
+            <td contenteditable="true" class="p-3 border-b border-slate-700">15 or 19 months</td>
+            <td contenteditable="true" class="p-3 border-b border-slate-700">Range 545–715 (Focus) / 580–750 (Classic)</td>
+            <td contenteditable="true" class="p-3 border-b border-slate-700">R1: 25 Sep 2025 • R2: 9 Jan 2026 • R3: 12 Mar 2026 • R4*: 8 May 2026</td>
+            <td contenteditable="true" class="p-3 border-b border-slate-700">*R4 often best for EU/visa-exempt</td>
+            <td contenteditable="true" class="p-3 border-b border-slate-700"></td><td contenteditable="true" class="p-3 border-b border-slate-700"></td><td contenteditable="true" class="p-3 border-b border-slate-700"></td><td contenteditable="true" class="p-3 border-b border-slate-700"></td>
+          </tr>
 
-        <div class="table-wrap">
-            <table id="crm-table" class="w-full text-sm">
-                <thead class="bg-slate-900 text-gray-300">
-                    <tr>
-                        <th class="p-3 text-left border-b border-slate-700">School Name</th>
-                        <th class="p-3 text-left border-b border-slate-700">Country</th>
-                        <th class="p-3 text-left border-b border-slate-700">Category</th>
-                        <th class="p-3 text-left border-b border-slate-700">Features (USP)</th>
-                        <th class="p-3 text-left border-b border-slate-700">Duration</th>
-                        <th class="p-3 text-left border-b border-slate-700">Average / Median GMAT</th>
-                        <th class="p-3 text-left border-b border-slate-700">Application Deadlines (2025–26 cycle)</th>
-                        <th class="p-3 text-left border-b border-slate-700">Notes</th>
-                        <th class="p-3 text-left border-b border-slate-700">Max Electives (per program)</th>
-                        <th class="p-3 text-left border-b border-slate-700">Electives (leave blank)</th>
-                        <th class="p-3 text-left border-b border-slate-700">Alumni You Can Contact (leave blank)</th>
-                        <th class="p-3 text-left border-b border-slate-700">LinkedIn Contact from AdComms</th>
-                    </tr>
-                </thead>
-                <tbody class="bg-slate-800">
-                    <tr class='Dream'><td contenteditable="true" class="p-3 border-b border-slate-700">IESE Business School</td><td class="p-3 border-b border-slate-700"><span class="pill inline-block px-2 py-1 rounded-full text-xs">Spain</span></td><td contenteditable="true" class="p-3 border-b border-slate-700">Dream</td><td contenteditable="true" class="p-3 border-b border-slate-700"></td><td contenteditable="true" class="p-3 border-b border-slate-700">15 or 19 months</td><td contenteditable="true" class="p-3 border-b border-slate-700">No official average; GMAT acceptance range 545–715 (Focus) / 580–750 (Classic)</td><td contenteditable="true" class="p-3 border-b border-slate-700">R1: 25 Sep 2025 • R2: 9 Jan 2026 • R3: 12 Mar 2026 • R4*: 8 May 2026</td><td contenteditable="true" class="p-3 border-b border-slate-700">*R4 typically for EU passport holders or visa-exempt; check IESE site</td><td contenteditable="true" class="p-3 border-b border-slate-700"></td><td contenteditable="true" class="p-3 border-b border-slate-700"></td><td contenteditable="true" class="p-3 border-b border-slate-700"></td><td contenteditable="true" class="p-3 border-b border-slate-700"></td></tr>
-                    <tr class='Dream'><td contenteditable="true" class="p-3 border-b border-slate-700">University of Oxford – Saïd</td><td class="p-3 border-b border-slate-700"><span class="pill inline-block px-2 py-1 rounded-full text-xs">United Kingdom</span></td><td contenteditable="true" class="p-3 border-b border-slate-700">Dream</td><td contenteditable="true" class="p-3 border-b border-slate-700"></td><td contenteditable="true" class="p-3 border-b border-slate-700">12 months</td><td contenteditable="true" class="p-3 border-b border-slate-700">Median GMAT: 680</td><td contenteditable="true" class="p-3 border-b border-slate-700">Stage 1: 1 Sep 2025 • Stage 2: 1 Oct 2025 • Stage 3: 3 Nov 2025 • Stage 4: 7 Jan 2026 • Stage 5: 16 Mar 2026</td><td contenteditable="true" class="p-3 border-b border-slate-700"></td><td contenteditable="true" class="p-3 border-b border-slate-700"></td><td contenteditable="true" class="p-3 border-b border-slate-700"></td><td contenteditable="true" class="p-3 border-b border-slate-700"></td><td contenteditable="true" class="p-3 border-b border-slate-700"></td></tr>
-                    <tr class='Dream'><td contenteditable="true" class="p-3 border-b border-slate-700">University of Cambridge – Judge</td><td class="p-3 border-b border-slate-700"><span class="pill inline-block px-2 py-1 rounded-full text-xs">United Kingdom</span></td><td contenteditable="true" class="p-3 border-b border-slate-700">Dream</td><td contenteditable="true" class="p-3 border-b border-slate-700"></td><td contenteditable="true" class="p-3 border-b border-slate-700">12 months</td><td contenteditable="true" class="p-3 border-b border-slate-700">Average GMAT: 697</td><td contenteditable="true" class="p-3 border-b border-slate-700">R2: 6 Oct 2025 • R3: 5 Jan 2026 • R4: 30 Mar 2026 • R5: 5 May 2026</td><td contenteditable="true" class="p-3 border-b border-slate-700"></td><td contenteditable="true" class="p-3 border-b border-slate-700"></td><td contenteditable="true" class="p-3 border-b border-slate-700"></td><td contenteditable="true" class="p-3 border-b border-slate-700"></td><td contenteditable="true" class="p-3 border-b border-slate-700"></td></tr>
-                    <tr class='Target'><td contenteditable="true" class="p-3 border-b border-slate-700">IE Business School</td><td class="p-3 border-b border-slate-700"><span class="pill inline-block px-2 py-1 rounded-full text-xs">Spain</span></td><td contenteditable="true" class="p-3 border-b border-slate-700">Target</td><td contenteditable="true" class="p-3 border-b border-slate-700"></td><td contenteditable="true" class="p-3 border-b border-slate-700">11–15 months</td><td contenteditable="true" class="p-3 border-b border-slate-700">Average GMAT: ~680</td><td contenteditable="true" class="p-3 border-b border-slate-700">Rolling admissions (examples: final day for Sep 2025 start—1 Sep 2025; Jan 2026 start—30 Dec 2025)</td><td contenteditable="true" class="p-3 border-b border-slate-700">Apply early for scholarships; seats fill on a rolling basis</td><td contenteditable="true" class="p-3 border-b border-slate-700"></td><td contenteditable="true" class="p-3 border-b border-slate-700"></td><td contenteditable="true" class="p-3 border-b border-slate-700"></td><td contenteditable="true" class="p-3 border-b border-slate-700"></td></tr>
-                    <tr class='Target'><td contenteditable="true" class="p-3 border-b border-slate-700">SDA Bocconi</td><td class="p-3 border-b border-slate-700"><span class="pill inline-block px-2 py-1 rounded-full text-xs">Italy</span></td><td contenteditable="true" class="p-3 border-b border-slate-700">Target</td><td contenteditable="true" class="p-3 border-b border-slate-700"></td><td contenteditable="true" class="p-3 border-b border-slate-700">12 months</td><td contenteditable="true" class="p-3 border-b border-slate-700">Average GMAT: ~650–665</td><td contenteditable="true" class="p-3 border-b border-slate-700">R1: 4 Nov 2025 • R2: 13 Jan 2026 • R3: 3 Mar 2026 • R4: 15 Apr 2026</td><td contenteditable="true" class="p-3 border-b border-slate-700">Application deadline for 2026 intake: 15 Apr 2026</td><td contenteditable="true" class="p-3 border-b border-slate-700"></td><td contenteditable="true" class="p-3 border-b border-slate-700"></td><td contenteditable="true" class="p-3 border-b border-slate-700"></td><td contenteditable="true" class="p-3 border-b border-slate-700"></td></tr>
-                    <tr class='Target'><td contenteditable="true" class="p-3 border-b border-slate-700">Rotterdam School of Management (RSM)</td><td class="p-3 border-b border-slate-700"><span class="pill inline-block px-2 py-1 rounded-full text-xs">Netherlands</span></td><td contenteditable="true" class="p-3 border-b border-slate-700">Target</td><td contenteditable="true" class="p-3 border-b border-slate-700"></td><td contenteditable="true" class="p-3 border-b border-slate-700">12 months</td><td contenteditable="true" class="p-3 border-b border-slate-700">Average GMAT: ~640</td><td contenteditable="true" class="p-3 border-b border-slate-700">Jan 2026 intake rounds: 11 Feb • 8 Apr • 3 Jun • 12 Aug • 1 Oct • 4 Nov 2025</td><td contenteditable="true" class="p-3 border-b border-slate-700"></td><td contenteditable="true" class="p-3 border-b border-slate-700"></td><td contenteditable="true" class="p-3 border-b border-slate-700"></td><td contenteditable="true" class="p-3 border-b border-slate-700"></td><td contenteditable="true" class="p-3 border-b border-slate-700"></td></tr>
-                    <tr class='Target'><td contenteditable="true" class="p-3 border-b border-slate-700">Imperial College Business School</td><td class="p-3 border-b border-slate-700"><span class="pill inline-block px-2 py-1 rounded-full text-xs">United Kingdom</span></td><td contenteditable="true" class="p-3 border-b border-slate-700">Target</td><td contenteditable="true" class="p-3 border-b border-slate-700"></td><td contenteditable="true" class="p-3 border-b border-slate-700">12 months</td><td contenteditable="true" class="p-3 border-b border-slate-700">Average GMAT: ~660 (school does not publish)</td><td contenteditable="true" class="p-3 border-b border-slate-700">23 Sep 2025 • 13 Jan 2026 • 17 Mar 2026 • 28 Apr 2026</td><td contenteditable="true" class="p-3 border-b border-slate-700"></td><td contenteditable="true" class="p-3 border-b border-slate-700"></td><td contenteditable="true" class="p-3 border-b border-slate-700"></td><td contenteditable="true" class="p-3 border-b border-slate-700"></td><td contenteditable="true" class="p-3 border-b border-slate-700"></td></tr>
-                    <tr class='Target'><td contenteditable="true" class="p-3 border-b border-slate-700">ESSEC Business School (Global MBA)</td><td class="p-3 border-b border-slate-700"><span class="pill inline-block px-2 py-1 rounded-full text-xs">France</span></td><td contenteditable="true" class="p-3 border-b border-slate-700">Target</td><td contenteditable="true" class="p-3 border-b border-slate-700"></td><td contenteditable="true" class="p-3 border-b border-slate-700">12 months</td><td contenteditable="true" class="p-3 border-b border-slate-700">Average GMAT Focus (equiv): ~615</td><td contenteditable="true" class="p-3 border-b border-slate-700">Apps accepted through Jun 2026; Early Bird: 6 Oct 2025</td><td contenteditable="true" class="p-3 border-b border-slate-700"></td><td contenteditable="true" class="p-3 border-b border-slate-700"></td><td contenteditable="true" class="p-3 border-b border-slate-700"></td><td contenteditable="true" class="p-3 border-b border-slate-700"></td><td contenteditable="true" class="p-3 border-b border-slate-700"></td></tr>
-                    <tr class='Safety'><td contenteditable="true" class="p-3 border-b border-slate-700">Warwick Business School</td><td class="p-3 border-b border-slate-700"><span class="pill inline-block px-2 py-1 rounded-full text-xs">United Kingdom</span></td><td contenteditable="true" class="p-3 border-b border-slate-700">Safety</td><td contenteditable="true" class="p-3 border-b border-slate-700"></td><td contenteditable="true" class="p-3 border-b border-slate-700">12 months</td><td contenteditable="true" class="p-3 border-b border-slate-700">Average GMAT: 670 (615 Focus)</td><td contenteditable="true" class="p-3 border-b border-slate-700">2026 cycle TBA; 2025 example rounds: 6 Oct • 10 Nov • 12 Jan • 30 Mar • 21 May (Intl) • 31 Jul</td><td contenteditable="true" class="p-3 border-b border-slate-700"></td><td contenteditable="true" class="p-3 border-b border-slate-700"></td><td contenteditable="true" class="p-3 border-b border-slate-700"></td><td contenteditable="true" class="p-3 border-b border-slate-700"></td><td contenteditable="true" class="p-3 border-b border-slate-700"></td></tr>
-                    <tr class='Safety'><td contenteditable="true" class="p-3 border-b border-slate-700">ESADE Barcelona</td><td class="p-3 border-b border-slate-700"><span class="pill inline-block px-2 py-1 rounded-full text-xs">Spain</span></td><td contenteditable="true" class="p-3 border-b border-slate-700">Safety</td><td contenteditable="true" class="p-3 border-b border-slate-700"></td><td contenteditable="true" class="p-3 border-b border-slate-700">12 / 15 / 18 months</td><td contenteditable="true" class="p-3 border-b border-slate-700">Average GMAT: ~660 (615 Focus)</td><td contenteditable="true" class="p-3 border-b border-slate-700">2026 cycle TBA; 2024–25 rounds ran Oct–Jun monthly (9 rounds)</td><td contenteditable="true" class="p-3 border-b border-slate-700">Expect similar cadence; verify when 2026 calendar posts</td><td contenteditable="true" class="p-3 border-b border-slate-700"></td><td contenteditable="true" class="p-3 border-b border-slate-700"></td><td contenteditable="true" class="p-3 border-b border-slate-700"></td><td contenteditable="true" class="p-3 border-b border-slate-700"></td></tr>
-                    <tr class='Safety'><td contenteditable="true" class="p-3 border-b border-slate-700">ESMT Berlin</td><td class="p-3 border-b border-slate-700"><span class="pill inline-block px-2 py-1 rounded-full text-xs">Germany</span></td><td contenteditable="true" class="p-3 border-b border-slate-700">Safety</td><td contenteditable="true" class="p-3 border-b border-slate-700"></td><td contenteditable="true" class="p-3 border-b border-slate-700">15 months</td><td contenteditable="true" class="p-3 border-b border-slate-700">Average GMAT: ~640</td><td contenteditable="true" class="p-3 border-b border-slate-700">Jan 2026 intake timeline: R1 28 Feb 2025 • R2 11 Apr 2025 • R3 30 May 2025 • Visa cutoff 22 Aug 2025 • Final 14 Nov 2025</td><td contenteditable="true" class="p-3 border-b border-slate-700"></td><td contenteditable="true" class="p-3 border-b border-slate-700"></td><td contenteditable="true" class="p-3 border-b border-slate-700"></td><td contenteditable="true" class="p-3 border-b border-slate-700"></td><td contenteditable="true" class="p-3 border-b border-slate-700"></td></tr>
-                    <tr class='Safety'><td contenteditable="true" class="p-3 border-b border-slate-700">Stockholm School of Economics (SSE) – MBA</td><td class="p-3 border-b border-slate-700"><span class="pill inline-block px-2 py-1 rounded-full text-xs">Sweden</span></td><td contenteditable="true" class="p-3 border-b border-slate-700">Safety</td><td contenteditable="true" class="p-3 border-b border-slate-700"></td><td contenteditable="true" class="p-3 border-b border-slate-700">~12 months (intensive / exec-style)</td><td contenteditable="true" class="p-3 border-b border-slate-700">GMAT: not required; not published</td><td contenteditable="true" class="p-3 border-b border-slate-700">Rolling; decisions end-May/Jun/Aug/Sep/Oct (next start Jan)</td><td contenteditable="true" class="p-3 border-b border-slate-700">Program branded as Executive MBA; confirm fit vs full-time MBA</td><td contenteditable="true" class="p-3 border-b border-slate-700"></td><td contenteditable="true" class="p-3 border-b border-slate-700"></td><td contenteditable="true" class="p-3 border-b border-slate-700"></td><td contenteditable="true" class="p-3 border-b border-slate-700"></td></tr>
-                    <tr class='USWildcard'><td contenteditable="true" class="p-3 border-b border-slate-700">Michigan Ross School of Business</td><td class="p-3 border-b border-slate-700"><span class="pill inline-block px-2 py-1 rounded-full text-xs">United States</span></td><td contenteditable="true" class="p-3 border-b border-slate-700">US Wildcard</td><td contenteditable="true" class="p-3 border-b border-slate-700"></td><td contenteditable="true" class="p-3 border-b border-slate-700">24 months</td><td contenteditable="true" class="p-3 border-b border-slate-700">Average GMAT: 728</td><td contenteditable="true" class="p-3 border-b border-slate-700">R1: 8 Sep 2025 • R2: 5 Jan 2026 • R3: 23 Mar 2026</td><td contenteditable="true" class="p-3 border-b border-slate-700">Apps due 11:59pm ET on deadlines</td><td contenteditable="true" class="p-3 border-b border-slate-700"></td><td contenteditable="true" class="p-3 border-b border-slate-700"></td><td contenteditable="true" class="p-3 border-b border-slate-700"></td><td contenteditable="true" class="p-3 border-b border-slate-700"></td></tr>
-                </tbody>
-            </table>
-        </div>
-        <p class="text-sm text-gray-400 mt-4">Tip: Click any cell to edit. Your changes auto-save locally. Export CSV anytime.</p>
-    </section>
+          <tr class="Dream">
+            <td contenteditable="true" class="p-3 border-b border-slate-700">University of Oxford – Saïd</td>
+            <td class="p-3 border-b border-slate-700"><span class="pill">United Kingdom</span></td>
+            <td contenteditable="true" class="p-3 border-b border-slate-700">Dream</td>
+            <td contenteditable="true" class="p-3 border-b border-slate-700"></td>
+            <td contenteditable="true" class="p-3 border-b border-slate-700">12 months</td>
+            <td contenteditable="true" class="p-3 border-b border-slate-700">Median GMAT: 680</td>
+            <td contenteditable="true" class="p-3 border-b border-slate-700">Stage 1: 1 Sep 2025 • Stage 2: 1 Oct 2025 • Stage 3: 3 Nov 2025 • Stage 4: 7 Jan 2026 • Stage 5: 16 Mar 2026</td>
+            <td contenteditable="true" class="p-3 border-b border-slate-700"></td>
+            <td contenteditable="true" class="p-3 border-b border-slate-700"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
+          </tr>
 
-    <!-- PLANNER -->
-    <section id="planner" class="bg-slate-800 border border-slate-700 rounded-xl p-4 mt-4" style="display:none">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div class="bg-slate-900 border border-slate-700 rounded-lg p-4">
-                <h3 class="font-semibold text-lg mb-2">Electives — Considering</h3>
-                <div class="flex flex-wrap gap-2 mb-4">
-                    <select id="pl-school" class="w-full md:w-auto p-2 rounded-lg bg-slate-800 border border-slate-700 text-gray-100"></select>
-                    <input id="pl-category" type="text" placeholder="Broad category (e.g., Strategy & Geopolitics)" class="flex-1 p-2 rounded-lg bg-slate-800 border border-slate-700 text-gray-100 placeholder-gray-500">
-                    <input id="pl-title" type="text" placeholder="Elective title (exact, from brochure)" class="flex-1 p-2 rounded-lg bg-slate-800 border border-slate-700 text-gray-100 placeholder-gray-500">
-                    <input id="pl-notes" type="text" placeholder="Notes (why relevant, prof, term)" class="flex-1 p-2 rounded-lg bg-slate-800 border border-slate-700 text-gray-100 placeholder-gray-500">
-                    <button class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-4 py-2 rounded-lg transition-colors duration-200" id="pl-add">Add</button>
-                </div>
-                <div id="considering"></div>
-            </div>
-            <div class="bg-slate-900 border border-slate-700 rounded-lg p-4">
-                <h3 class="font-semibold text-lg mb-2">Electives — Chosen</h3>
-                <p class="text-xs text-gray-400 mb-2">Counters respect each school’s <b>Max Electives</b> (soft limit) set in the CRM.</p>
-                <div id="chosen"></div>
-            </div>
-        </div>
-        <div class="flex flex-wrap gap-2 mt-4">
-            <button class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-4 py-2 rounded-lg transition-colors duration-200" id="export-planner">Export Planner JSON</button>
-            <label class="bg-slate-700 hover:bg-slate-600 text-white font-medium px-4 py-2 rounded-lg transition-colors duration-200 cursor-pointer">
-                Import JSON
-                <input id="import-json" type="file" accept="application/json" class="hidden">
-            </label>
-            <button class="bg-red-600 hover:bg-red-700 text-white font-medium px-4 py-2 rounded-lg transition-colors duration-200" id="clear-planner">Clear Planner</button>
-        </div>
-    </section>
+          <tr class="Dream">
+            <td contenteditable="true" class="p-3 border-b border-slate-700">University of Cambridge – Judge</td>
+            <td class="p-3 border-b border-slate-700"><span class="pill">United Kingdom</span></td>
+            <td contenteditable="true" class="p-3 border-b border-slate-700">Dream</td>
+            <td contenteditable="true" class="p-3 border-b border-slate-700"></td>
+            <td contenteditable="true" class="p-3 border-b border-slate-700">12 months</td>
+            <td contenteditable="true" class="p-3 border-b border-slate-700">Average GMAT: 697</td>
+            <td contenteditable="true" class="p-3 border-b border-slate-700">R2: 6 Oct 2025 • R3: 5 Jan 2026 • R4: 30 Mar 2026 • R5: 5 May 2026</td>
+            <td contenteditable="true" class="p-3 border-b border-slate-700"></td>
+            <td contenteditable="true" class="p-3 border-b border-slate-700"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
+          </tr>
 
-    <!-- ESSAY -->
-    <section id="essay" class="bg-slate-800 border border-slate-700 rounded-xl p-4 mt-4" style="display:none">
-        <div class="flex flex-wrap gap-2 mb-2">
-            <select id="eq-school" class="p-2 rounded-lg bg-slate-900 border border-slate-700 text-gray-100 flex-1"></select>
-            <select id="eq-type" class="p-2 rounded-lg bg-slate-900 border border-slate-700 text-gray-100 flex-1">
-                <option value="Required essay">Required essay</option>
-                <option value="Optional essay">Optional essay</option>
-                <option value="Short answer">Short answer</option>
-                <option value="Video/Kira prompt">Video/Kira prompt</option>
-                <option value="Scholarship essay">Scholarship essay</option>
-            </select>
-            <input id="eq-wordlimit" type="number" min="0" placeholder="Word limit (e.g., 500)" class="p-2 rounded-lg bg-slate-900 border border-slate-700 text-gray-100 placeholder-gray-500 flex-1">
-            <input id="eq-deadline" type="date" placeholder="Deadline" class="p-2 rounded-lg bg-slate-900 border border-slate-700 text-gray-100 placeholder-gray-500 flex-1">
-        </div>
-        <div class="flex flex-wrap gap-2 mb-2">
-            <input id="eq-theme" type="text" placeholder="Theme (e.g., goals, why school, leadership)" class="flex-1 p-2 rounded-lg bg-slate-900 border border-slate-700 text-gray-100 placeholder-gray-500">
-            <input id="eq-notes" type="text" placeholder="Notes (how it fits your story)" class="flex-1 p-2 rounded-lg bg-slate-900 border border-slate-700 text-gray-100 placeholder-gray-500">
-        </div>
-        <div class="flex flex-wrap gap-2 mb-2">
-            <textarea id="eq-question" placeholder="Paste the exact essay question here" class="w-full p-2 rounded-lg bg-slate-900 border border-slate-700 text-gray-100 placeholder-gray-500 min-h-[110px] resize-y"></textarea>
-        </div>
+          <tr class="Target">
+            <td contenteditable="true" class="p-3 border-b border-slate-700">IE Business School</td>
+            <td class="p-3 border-b border-slate-700"><span class="pill">Spain</span></td>
+            <td contenteditable="true" class="p-3 border-b border-slate-700">Target</td>
+            <td contenteditable="true" class="p-3 border-b border-slate-700"></td>
+            <td contenteditable="true" class="p-3 border-b border-slate-700">11–15 months</td>
+            <td contenteditable="true" class="p-3 border-b border-slate-700">Avg ~680</td>
+            <td contenteditable="true" class="p-3 border-b border-slate-700">Rolling; e.g., Sep’25 final ~1 Sep; Jan’26 final ~30 Dec</td>
+            <td contenteditable="true" class="p-3 border-b border-slate-700">Apply early for scholarships</td>
+            <td contenteditable="true" class="p-3 border-b border-slate-700"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
+          </tr>
+
+          <tr class="Target">
+            <td contenteditable="true" class="p-3 border-b border-slate-700">SDA Bocconi</td>
+            <td class="p-3 border-b border-slate-700"><span class="pill">Italy</span></td>
+            <td contenteditable="true" class="p-3 border-b border-slate-700">Target</td>
+            <td contenteditable="true" class="p-3 border-b border-slate-700"></td>
+            <td contenteditable="true" class="p-3 border-b border-slate-700">12 months</td>
+            <td contenteditable="true" class="p-3 border-b border-slate-700">Avg ~650–665</td>
+            <td contenteditable="true" class="p-3 border-b border-slate-700">R1: 4 Nov 2025 • R2: 13 Jan 2026 • R3: 3 Mar 2026 • R4: 15 Apr 2026</td>
+            <td contenteditable="true" class="p-3 border-b border-slate-700">Final 2026 intake deadline 15 Apr 2026</td>
+            <td contenteditable="true" class="p-3 border-b border-slate-700"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
+          </tr>
+
+          <tr class="Target">
+            <td contenteditable="true" class="p-3 border-b border-slate-700">Rotterdam School of Management (RSM)</td>
+            <td class="p-3 border-b border-slate-700"><span class="pill">Netherlands</span></td>
+            <td contenteditable="true" class="p-3 border-b border-slate-700">Target</td>
+            <td contenteditable="true" class="p-3 border-b border-slate-700"></td>
+            <td contenteditable="true" class="p-3 border-b border-slate-700">12 months</td>
+            <td contenteditable="true" class="p-3 border-b border-slate-700">Avg ~640</td>
+            <td contenteditable="true" class="p-3 border-b border-slate-700">Jan 2026 rounds: 11 Feb • 8 Apr • 3 Jun • 12 Aug • 1 Oct • 4 Nov 2025</td>
+            <td contenteditable="true" class="p-3 border-b border-slate-700"></td>
+            <td contenteditable="true" class="p-3 border-b border-slate-700"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
+          </tr>
+
+          <tr class="Target">
+            <td contenteditable="true" class="p-3 border-b border-slate-700">Imperial College Business School</td>
+            <td class="p-3 border-b border-slate-700"><span class="pill">United Kingdom</span></td>
+            <td contenteditable="true" class="p-3 border-b border-slate-700">Target</td>
+            <td contenteditable="true" class="p-3 border-b border-slate-700"></td>
+            <td contenteditable="true" class="p-3 border-b border-slate-700">12 months</td>
+            <td contenteditable="true" class="p-3 border-b border-slate-700">Avg ~660 (not published)</td>
+            <td contenteditable="true" class="p-3 border-b border-slate-700">23 Sep 2025 • 13 Jan 2026 • 17 Mar 2026 • 28 Apr 2026</td>
+            <td contenteditable="true" class="p-3 border-b border-slate-700"></td>
+            <td contenteditable="true" class="p-3 border-b border-slate-700"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
+          </tr>
+
+          <tr class="Target">
+            <td contenteditable="true" class="p-3 border-b border-slate-700">ESSEC Business School (Global MBA)</td>
+            <td class="p-3 border-b border-slate-700"><span class="pill">France</span></td>
+            <td contenteditable="true" class="p-3 border-b border-slate-700">Target</td>
+            <td contenteditable="true" class="p-3 border-b border-slate-700"></td>
+            <td contenteditable="true" class="p-3 border-b border-slate-700">12 months</td>
+            <td contenteditable="true" class="p-3 border-b border-slate-700">~615 Focus equiv</td>
+            <td contenteditable="true" class="p-3 border-b border-slate-700">Apps accepted through Jun 2026; Early Bird ~6 Oct 2025</td>
+            <td contenteditable="true" class="p-3 border-b border-slate-700"></td>
+            <td contenteditable="true" class="p-3 border-b border-slate-700"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
+          </tr>
+
+          <tr class="Safety">
+            <td contenteditable="true" class="p-3 border-b border-slate-700">Warwick Business School</td>
+            <td class="p-3 border-b border-slate-700"><span class="pill">United Kingdom</span></td>
+            <td contenteditable="true" class="p-3 border-b border-slate-700">Safety</td>
+            <td contenteditable="true" class="p-3 border-b border-slate-700"></td>
+            <td contenteditable="true" class="p-3 border-b border-slate-700">12 months</td>
+            <td contenteditable="true" class="p-3 border-b border-slate-700">Avg GMAT 670 (615 Focus)</td>
+            <td contenteditable="true" class="p-3 border-b border-slate-700">2026 TBA; 2025 example rounds: Oct–Jul</td>
+            <td contenteditable="true" class="p-3 border-b border-slate-700"></td>
+            <td contenteditable="true" class="p-3 border-b border-slate-700"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
+          </tr>
+
+          <tr class="Safety">
+            <td contenteditable="true" class="p-3 border-b border-slate-700">ESADE Barcelona</td>
+            <td class="p-3 border-b border-slate-700"><span class="pill">Spain</span></td>
+            <td contenteditable="true" class="p-3 border-b border-slate-700">Safety</td>
+            <td contenteditable="true" class="p-3 border-b border-slate-700"></td>
+            <td contenteditable="true" class="p-3 border-b border-slate-700">12 / 15 / 18 months</td>
+            <td contenteditable="true" class="p-3 border-b border-slate-700">~660 (615 Focus)</td>
+            <td contenteditable="true" class="p-3 border-b border-slate-700">Rounds typically Oct–Jun (monthly)</td>
+            <td contenteditable="true" class="p-3 border-b border-slate-700">Flexible length: internship/exchange options</td>
+            <td contenteditable="true" class="p-3 border-b border-slate-700"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
+          </tr>
+
+          <tr class="Safety">
+            <td contenteditable="true" class="p-3 border-b border-slate-700">ESMT Berlin</td>
+            <td class="p-3 border-b border-slate-700"><span class="pill">Germany</span></td>
+            <td contenteditable="true" class="p-3 border-b border-slate-700">Safety</td>
+            <td contenteditable="true" class="p-3 border-b border-slate-700"></td>
+            <td contenteditable="true" class="p-3 border-b border-slate-700">15 months</td>
+            <td contenteditable="true" class="p-3 border-b border-slate-700">~640</td>
+            <td contenteditable="true" class="p-3 border-b border-slate-700">Jan 2026: R1 28 Feb • R2 11 Apr • R3 30 May • Visa 22 Aug • Final 14 Nov 2025</td>
+            <td contenteditable="true" class="p-3 border-b border-slate-700"></td>
+            <td contenteditable="true" class="p-3 border-b border-slate-700"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
+          </tr>
+
+          <tr class="Safety">
+            <td contenteditable="true" class="p-3 border-b border-slate-700">Stockholm School of Economics (SSE) – MBA</td>
+            <td class="p-3 border-b border-slate-700"><span class="pill">Sweden</span></td>
+            <td contenteditable="true" class="p-3 border-b border-slate-700">Safety</td>
+            <td contenteditable="true" class="p-3 border-b border-slate-700"></td>
+            <td contenteditable="true" class="p-3 border-b border-slate-700">Exec-format (~18 months)</td>
+            <td contenteditable="true" class="p-3 border-b border-slate-700">GMAT not required (not published)</td>
+            <td contenteditable="true" class="p-3 border-b border-slate-700">Rolling; cohort starts Jan</td>
+            <td contenteditable="true" class="p-3 border-b border-slate-700">Note: executive format; confirm fit vs full-time</td>
+            <td contenteditable="true" class="p-3 border-b border-slate-700"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
+          </tr>
+
+          <tr class="USWildcard">
+            <td contenteditable="true" class="p-3 border-b border-slate-700">Michigan Ross School of Business</td>
+            <td class="p-3 border-b border-slate-700"><span class="pill">United States</span></td>
+            <td contenteditable="true" class="p-3 border-b border-slate-700">US Wildcard</td>
+            <td contenteditable="true" class="p-3 border-b border-slate-700"></td>
+            <td contenteditable="true" class="p-3 border-b border-slate-700">24 months</td>
+            <td contenteditable="true" class="p-3 border-b border-slate-700">Avg 728</td>
+            <td contenteditable="true" class="p-3 border-b border-slate-700">R1: 8 Sep 2025 • R2: 5 Jan 2026 • R3: 23 Mar 2026</td>
+            <td contenteditable="true" class="p-3 border-b border-slate-700">Apps due 11:59pm ET</td>
+            <td contenteditable="true" class="p-3 border-b border-slate-700"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="text-sm text-gray-400 mt-4">Click any cell to edit • Your changes auto-save • Export CSV anytime.</p>
+  </section>
+
+  <!-- Planner -->
+  <section id="planner" class="bg-slate-800 border border-slate-700 rounded-xl p-4 mt-4" style="display:none">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div class="bg-slate-900 border border-slate-700 rounded-lg p-4">
+        <h3 class="font-semibold text-lg mb-2">Electives — Considering</h3>
         <div class="flex flex-wrap gap-2 mb-4">
-            <button class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-4 py-2 rounded-lg transition-colors duration-200" id="eq-add">Add Question</button>
-            <button class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-4 py-2 rounded-lg transition-colors duration-200" id="eq-export">Export JSON</button>
-            <label class="bg-slate-700 hover:bg-slate-600 text-white font-medium px-4 py-2 rounded-lg transition-colors duration-200 cursor-pointer">
-                Import JSON
-                <input id="eq-import" type="file" accept="application/json" class="hidden">
-            </label>
-            <button class="bg-red-600 hover:bg-red-700 text-white font-medium px-4 py-2 rounded-lg transition-colors duration-200" id="eq-clear">Clear All</button>
+          <select id="pl-school" class="w-full md:w-auto p-2 rounded-lg bg-slate-800 border border-slate-700 text-gray-100"></select>
+          <input id="pl-category" type="text" placeholder="Broad category (e.g., Strategy & Geopolitics)" class="flex-1 p-2 rounded-lg bg-slate-800 border border-slate-700 text-gray-100 placeholder-gray-500">
+          <input id="pl-title" type="text" placeholder="Elective title (exact, from brochure)" class="flex-1 p-2 rounded-lg bg-slate-800 border border-slate-700 text-gray-100 placeholder-gray-500">
+          <input id="pl-notes" type="text" placeholder="Notes (why relevant, prof, term)" class="flex-1 p-2 rounded-lg bg-slate-800 border border-slate-700 text-gray-100 placeholder-gray-500">
+          <button id="pl-add" class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-4 py-2 rounded-lg">Add</button>
         </div>
-        <div id="eq-list" class="grid gap-4 md:grid-cols-2 lg:grid-cols-3"></div>
-        <p class="text-sm text-gray-400 mt-4">All entries save locally (localStorage). Use Export/Import for backup.</p>
-    </section>
+        <div id="considering"></div>
+      </div>
+      <div class="bg-slate-900 border border-slate-700 rounded-lg p-4">
+        <h3 class="font-semibold text-lg mb-2">Electives — Chosen</h3>
+        <p class="text-xs text-gray-400 mb-2">Counters respect each school’s <b>Max Electives</b> (soft limit) set in the CRM.</p>
+        <div id="chosen"></div>
+      </div>
+    </div>
+    <div class="flex flex-wrap gap-2 mt-4">
+      <button id="export-planner" class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-4 py-2 rounded-lg">Export Planner JSON</button>
+      <label class="bg-slate-700 hover:bg-slate-600 text-white font-medium px-4 py-2 rounded-lg cursor-pointer">
+        Import JSON <input id="import-json" type="file" accept="application/json" class="hidden">
+      </label>
+      <button id="clear-planner" class="bg-red-600 hover:bg-red-700 text-white font-medium px-4 py-2 rounded-lg">Clear Planner</button>
+    </div>
+  </section>
+
+  <!-- Essay -->
+  <section id="essay" class="bg-slate-800 border border-slate-700 rounded-xl p-4 mt-4" style="display:none">
+    <div class="flex flex-wrap gap-2 mb-2">
+      <select id="eq-school" class="p-2 rounded-lg bg-slate-900 border border-slate-700 text-gray-100 flex-1"></select>
+      <select id="eq-type" class="p-2 rounded-lg bg-slate-900 border border-slate-700 text-gray-100 flex-1">
+        <option>Required essay</option><option>Optional essay</option><option>Short answer</option><option>Video/Kira prompt</option><option>Scholarship essay</option>
+      </select>
+      <input id="eq-wordlimit" type="number" min="0" placeholder="Word limit (e.g., 500)" class="p-2 rounded-lg bg-slate-900 border border-slate-700 text-gray-100 flex-1">
+      <input id="eq-deadline" type="date" class="p-2 rounded-lg bg-slate-900 border border-slate-700 text-gray-100 flex-1">
+    </div>
+    <div class="flex flex-wrap gap-2 mb-2">
+      <input id="eq-theme" type="text" placeholder="Theme (e.g., goals, why school, leadership)" class="flex-1 p-2 rounded-lg bg-slate-900 border border-slate-700 text-gray-100">
+      <input id="eq-notes" type="text" placeholder="Notes (how it fits your story)" class="flex-1 p-2 rounded-lg bg-slate-900 border border-slate-700 text-gray-100">
+    </div>
+    <div class="flex flex-wrap gap-2 mb-2">
+      <textarea id="eq-question" placeholder="Paste the exact essay question here" class="w-full p-2 rounded-lg bg-slate-900 border border-slate-700 text-gray-100 min-h-[110px] resize-y"></textarea>
+    </div>
+    <div class="flex flex-wrap gap-2 mb-4">
+      <button id="eq-add" class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-4 py-2 rounded-lg">Add Question</button>
+      <button id="eq-export" class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-4 py-2 rounded-lg">Export JSON</button>
+      <label class="bg-slate-700 hover:bg-slate-600 text-white font-medium px-4 py-2 rounded-lg cursor-pointer">
+        Import JSON <input id="eq-import" type="file" accept="application/json" class="hidden">
+      </label>
+      <button id="eq-clear" class="bg-red-600 hover:bg-red-700 text-white font-medium px-4 py-2 rounded-lg">Clear All</button>
+    </div>
+    <div id="eq-list" class="grid gap-4 md:grid-cols-2 lg:grid-cols-3"></div>
+    <p class="text-sm text-gray-400 mt-4">All entries save locally (localStorage). Export/Import for backup.</p>
+  </section>
 </div>
 
 <script>
-    /* ===== Tabs ===== */
-    (function(){
-        const panels = { crm: document.getElementById('crm'), planner: document.getElementById('planner'), essay: document.getElementById('essay') };
-        const tabs = document.getElementById('app-tabs');
-        function show(id){
-            Object.keys(panels).forEach(k => panels[k].style.display = (k==='crm'?'block':'none')); // Ensure only CRM tab is initially shown
-            tabs.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active', t.dataset.tab===id));
-            if(id==='planner'){ setTimeout(refreshPlannerSchoolOptions, 50); }
-            if(id==='essay'){ setTimeout(populateEssaySchoolSelect, 50); renderEQ(); }
+/* ---------- Tabs (fixed) ---------- */
+(function(){
+  const panels = { crm:document.getElementById('crm'), planner:document.getElementById('planner'), essay:document.getElementById('essay') };
+  const tabsEl = document.getElementById('app-tabs');
+  function show(id){
+    Object.keys(panels).forEach(k => { panels[k].style.display = (k===id?'block':'none'); });
+    tabsEl.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab===id));
+    if(id==='planner'){ setTimeout(window.refreshPlannerSchoolOptions, 0); }
+    if(id==='essay'){ setTimeout(window.populateEssaySchoolSelect, 0); renderEQ(); }
+  }
+  tabsEl.addEventListener('click', e=>{
+    const t = e.target.closest('.tab'); if(!t) return;
+    show(t.dataset.tab);
+  });
+  show('crm'); // default
+})();
+
+/* ---------- FEATURES (local map, editable) ---------- */
+const FEATURES = {
+  "IESE Business School": "Case-method heavy general-management MBA in Barcelona; global perspective via the case method cornerstone.", 
+  "University of Oxford – Saïd": "Signature GOTO (Global Opportunities & Threats: Oxford) challenge linking global risks to enterprise solutions.", 
+  "University of Cambridge – Judge": "Mandatory 4-week Global Consulting Project with real clients to apply the core in the field.", 
+  "IE Business School": "Hands-on Labs (Startup/Venture/Tech) with options to incubate ideas and build in Madrid’s ecosystem.", 
+  "SDA Bocconi": "Milan location + optional Luxury Business Management exposure and strong luxury/fashion ties.", 
+  "Rotterdam School of Management (RSM)": "Personal Leadership Development (PLD) woven through the 12-month MBA; international study trips and exchange options.", 
+  "Imperial College Business School": "STEM-driven one-year MBA integrating tech and data with management in central London.", 
+  "ESSEC Business School (Global MBA)": "12-month global MBA with Career Learning Labs (e.g., Consulting, Finance, Luxury, Product) and Paris/Singapore reach.", 
+  "Warwick Business School": "LeadershipPlus, unlimited coaching, experiential teaching (drama, simulations) in a compact 12-month format.", 
+  "ESADE Barcelona": "Highly flexible 12/15/18-month tracks enabling internship and exchange; strong international cohort.", 
+  "ESMT Berlin": "Tracks in Managerial Analytics or Innovation & Entrepreneurship; optional Responsible Leaders Fellowship for social impact.", 
+  "Stockholm School of Economics (SSE) – MBA": "Executive-format (part-time) MBA with sustainability integrated; international modules incl. NUS/Stanford certificates.", 
+  "Michigan Ross School of Business": "MAP: 7-week, full-time, first-year action-learning consulting projects with global company sponsors."
+};
+
+/* ---------- CRM: edit, filter, CSV, autosave, fill features ---------- */
+(function(){
+  const KEY='mba_crm_sheet_v7';
+  const tbody = document.querySelector('#crm-table tbody');
+
+  function enableContentSave(){
+    tbody.querySelectorAll('td[contenteditable="true"]').forEach(td=>{
+      td.addEventListener('blur', autosave);
+    });
+  }
+
+  function autosave(){
+    const rows=[...tbody.querySelectorAll('tr')].map(tr =>
+      [...tr.children].map((td,j)=> td.innerText)
+    );
+    localStorage.setItem(KEY, JSON.stringify(rows));
+    window.refreshPlannerSchoolOptions();
+    window.populateEssaySchoolSelect();
+  }
+
+  function load(){
+    const raw=localStorage.getItem(KEY); if(!raw) return;
+    const data=JSON.parse(raw);
+    const trs=tbody.querySelectorAll('tr');
+    data.forEach((cells,i)=>{
+      const tr=trs[i]; if(!tr) return;
+      cells.forEach((v,j)=>{
+        if(j<tr.children.length){
+          if(j===1){ tr.children[j].innerHTML = `<span class="pill">${v}</span>`; }
+          else tr.children[j].innerText = v;
         }
-        tabs.addEventListener('click', (e)=>{
-            const t = e.target.closest('.tab'); if(!t) return;
-            show(t.dataset.tab);
-        });
-        show('crm');
-    })();
+      });
+    });
+  }
 
-    /* ===== CRM: editing, filters, CSV, autosave, and features fetching ===== */
-    (function(){
-        // Updated key for localStorage to avoid conflicts with previous versions
-        const KEY='mba_crm_sheet_v6';
-        const tbody = document.querySelector('#crm-table tbody');
-        const fetchBtn = document.getElementById('fetch-features-btn');
-        const fetchText = document.getElementById('fetch-text');
-        const fetchSpinner = document.getElementById('fetch-spinner');
+  function filter(){
+    const q=document.getElementById('q').value.toLowerCase().trim();
+    const country=document.getElementById('filter-country').value;
+    const cat=document.getElementById('filter-category').value.toLowerCase();
+    tbody.querySelectorAll('tr').forEach(tr=>{
+      const text=tr.innerText.toLowerCase();
+      let ok = !q || text.includes(q);
+      if(country) ok = ok && tr.children[1].innerText.trim()===country;
+      if(cat) ok = ok && tr.children[2].innerText.toLowerCase().trim()===cat;
+      tr.style.display = ok ? '' : 'none';
+    });
+  }
 
-        function showLoading(isLoading) {
-            fetchBtn.disabled = isLoading;
-            fetchText.classList.toggle('hidden', isLoading);
-            fetchSpinner.classList.toggle('hidden', !isLoading);
-        }
+  function exportCSV(){
+    const rows = [];
+    document.querySelectorAll('#crm-table tr').forEach(tr=>{
+      const cols=[];
+      tr.querySelectorAll('th,td').forEach(td=>{
+        let t=td.innerText.replace(/\n/g,' ').replace(/\s+/g,' ').trim();
+        if(t.includes(',')||t.includes('"')) t='"'+t.replace(/"/g,'""')+'"';
+        cols.push(t);
+      });
+      rows.push(cols.join(','));
+    });
+    const blob = new Blob([rows.join('\n')], {type:'text/csv;charset=utf-8;'});
+    const url = URL.createObjectURL(blob);
+    const a=document.createElement('a'); a.href=url; a.download='MBA_CRM.csv'; a.click(); URL.revokeObjectURL(url);
+  }
 
-        async function fetchFeaturesForSchools() {
-            showLoading(true);
-            const rows = [...tbody.querySelectorAll('tr')];
-            let retryDelay = 1000; // 1 second
+  function fillFeatures(){
+    const rows=[...tbody.querySelectorAll('tr')];
+    rows.forEach(tr=>{
+      const name = tr.children[0].innerText.trim();
+      const cell = tr.children[3];
+      if(!cell.innerText.trim() && FEATURES[name]){
+        cell.innerText = FEATURES[name];
+      }
+    });
+    autosave();
+  }
 
-            for (const tr of rows) {
-                const schoolName = tr.children[0].innerText.trim();
-                const featuresCell = tr.children[3]; // Updated index for the new 'Features' column
-                if (!schoolName || featuresCell.innerText.trim()) {
-                    continue; // Skip if no school name or features already exist
-                }
+  window.addEventListener('load', ()=>{
+    load(); enableContentSave();
+    document.getElementById('q').addEventListener('input', filter);
+    document.getElementById('filter-country').addEventListener('input', filter);
+    document.getElementById('filter-category').addEventListener('input', filter);
+    document.getElementById('export').addEventListener('click', exportCSV);
+    document.getElementById('fill-features').addEventListener('click', fillFeatures);
+  });
 
-                const prompt = `Find the key features and unique selling points (USP) of the MBA program at ${schoolName}. Summarize in one sentence.`;
-                console.log(`Searching for: ${prompt}`);
+  // keep planner/essay selects in sync on DOM mutation
+  const table = document.getElementById('crm-table');
+  if(table && 'MutationObserver' in window){
+    const mo = new MutationObserver(()=>{ clearTimeout(mo._t); mo._t=setTimeout(()=>{ window.refreshPlannerSchoolOptions(); window.populateEssaySchoolSelect(); }, 50); });
+    mo.observe(table, { childList:true, subtree:true, characterData:true });
+  }
+})();
 
-                // Exponential backoff retry loop for API calls
-                let success = false;
-                let retries = 0;
-                const maxRetries = 5;
-
-                while (!success && retries < maxRetries) {
-                    try {
-                        const payload = {
-                            contents: [{ role: "user", parts: [{ text: prompt }] }],
-                        };
-                        const apiKey = "";
-                        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
-                        const response = await fetch(apiUrl, {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify(payload)
-                        });
-
-                        if (!response.ok) {
-                             if (response.status === 429) {
-                                console.warn(`API rate limit hit. Retrying in ${retryDelay}ms...`);
-                                await new Promise(resolve => setTimeout(resolve, retryDelay));
-                                retryDelay *= 2; // Exponential backoff
-                                retries++;
-                                continue;
-                            }
-                            throw new Error(`API error: ${response.status}`);
-                        }
-
-                        const result = await response.json();
-                        const featureText = result?.candidates?.[0]?.content?.parts?.[0]?.text;
-
-                        if (featureText) {
-                            featuresCell.innerText = featureText;
-                            autosave();
-                            console.log(`Features for ${schoolName} found.`);
-                        } else {
-                            featuresCell.innerText = "No features found.";
-                        }
-                        success = true;
-                    } catch (error) {
-                        console.error(`Error fetching features for ${schoolName}:`, error);
-                        featuresCell.innerText = "Error fetching data.";
-                        if (retries < maxRetries - 1) {
-                            console.warn(`Retrying in ${retryDelay}ms...`);
-                            await new Promise(resolve => setTimeout(resolve, retryDelay));
-                            retryDelay *= 2;
-                        }
-                        retries++;
-                    }
-                }
-            }
-            showLoading(false);
-        }
-
-        function enableEditing(){
-            tbody.querySelectorAll('td[contenteditable="true"]').forEach(td=>{
-                td.addEventListener('blur', autosave);
-            });
-        }
-
-        function autosave(){
-            const rows=[...tbody.querySelectorAll('tr')].map(tr =>
-                [...tr.children].map((td,j)=>{
-                    // Only save innerText for the contenteditable cells
-                    return j === 1 ? (td.innerText||'').trim() : td.innerText;
-                })
-            );
-            localStorage.setItem(KEY, JSON.stringify(rows));
-            refreshPlannerSchoolOptions();
-            populateEssaySchoolSelect();
-        }
-
-        function load(){
-            const raw=localStorage.getItem(KEY); if(!raw) return;
-            const data=JSON.parse(raw);
-            const trs=tbody.querySelectorAll('tr');
-            data.forEach((cells,i)=>{
-                const tr=trs[i]; if(!tr) return;
-                cells.forEach((v,j)=>{
-                    // Check for the updated number of columns.
-                    // The new column is at index 3, and the old data didn't have it.
-                    if (j < tr.children.length) {
-                        const cell = tr.children[j];
-                        if(j===1){
-                             cell.innerHTML = `<span class="pill inline-block px-2 py-1 rounded-full text-xs">${v}</span>`;
-                        } else {
-                            cell.innerText = v;
-                        }
-                    }
-                });
-            });
-        }
-
-        function filter(){
-            const q=document.getElementById('q').value.toLowerCase().trim();
-            const country=document.getElementById('filter-country').value;
-            const cat=document.getElementById('filter-category').value.toLowerCase();
-            tbody.querySelectorAll('tr').forEach(tr=>{
-                const text=tr.innerText.toLowerCase();
-                let ok = !q || text.includes(q);
-                // Check if the country filter matches
-                if(country) ok = ok && tr.children[1].innerText.trim()===country;
-                // Check if the category filter matches
-                if(cat) ok = ok && tr.children[2].innerText.toLowerCase().trim()===cat;
-                tr.style.display = ok ? '' : 'none';
-            });
-        }
-
-        function exportCSV(){
-            const rows = [];
-            const table = document.querySelector('#crm-table');
-            table.querySelectorAll('tr').forEach(tr=>{
-                const cols = [];
-                tr.querySelectorAll('th,td').forEach(td=>{
-                    let t = td.innerText.replace(/\n/g,' ').replace(/\s+/g,' ').trim();
-                    if(t.includes(',')||t.includes('"')) t='"'+t.replace(/"/g,'""')+'"';
-                    cols.push(t);
-                });
-                rows.push(cols.join(','));
-            });
-            const blob = new Blob([rows.join('\n')], {type:'text/csv;charset=utf-8;'});
-            const url = URL.createObjectURL(blob);
-            const a=document.createElement('a'); a.href=url; a.download='MBA_CRM.csv'; a.click(); URL.revokeObjectURL(url);
-        }
-
-        window.addEventListener('load', ()=>{
-            load(); enableEditing();
-            document.getElementById('q').addEventListener('input', filter);
-            document.getElementById('filter-country').addEventListener('input', filter);
-            document.getElementById('filter-category').addEventListener('input', filter);
-            document.getElementById('export').addEventListener('click', exportCSV);
-            fetchBtn.addEventListener('click', fetchFeaturesForSchools);
-        });
-        
-        const table = document.getElementById('crm-table');
-        if (table && 'MutationObserver' in window) {
-            const mo = new MutationObserver(()=>{ clearTimeout(mo._t); mo._t=setTimeout(()=>{ refreshPlannerSchoolOptions(); populateEssaySchoolSelect(); }, 50); });
-            mo.observe(table, { childList:true, subtree:true, characterData:true });
-        }
-    })();
-
-    /* ===== Helpers to read school names + max electives from CRM ===== */
-    function getCRMRows(){
-        const rows=[...document.querySelectorAll('#crm-table tbody tr')];
-        // The new `Features` column is at index 3, so other indices are shifted.
-        return rows.map(tr=>[...tr.children].map(td=>td.innerText));
+/* ---------- Helpers to read CRM rows ---------- */
+function getCRMRows(){
+  return [...document.querySelectorAll('#crm-table tbody tr')].map(tr => [...tr.children].map(td=>td.innerText));
+}
+function getSchoolNames(){ return getCRMRows().map(r=>r[0].trim()).filter(Boolean); }
+function getMaxForSchool(name){
+  for(const r of getCRMRows()){
+    if(r[0].trim()===name.trim()){
+      const raw=r[8]?.trim(); const n=parseInt(raw,10);
+      return isNaN(n)?null:n;
     }
-    function getSchoolNames(){
-        return getCRMRows().map(r=>r[0].trim()).filter(Boolean);
-    }
-    function getMaxForSchool(name){
-        const rows=getCRMRows();
-        for(const r of rows){
-            if(r[0].trim()===name.trim()){
-                // The new 'Max Electives' column index is 8
-                const raw=r[8]?.trim(); const n=parseInt(raw,10);
-                return isNaN(n)?null:n;
-            }
-        }
-        return null;
+  }
+  return null;
+}
+
+/* ---------- Elective Planner (unchanged logic) ---------- */
+(function(){
+  const PK_CONSIDERING='electives_considering_v3';
+  const PK_CHOSEN='electives_chosen_v3';
+
+  function countsForSchool(name, chosen){ return chosen.filter(x=>x.school===name).length; }
+  function softLimitLabel(name, chosen){
+    const max=getMaxForSchool(name), cnt=countsForSchool(name, chosen);
+    if(max==null) return `<span class="text-sm text-gray-400">Max: —</span>`;
+    if(cnt<max) return `<span class="text-sm text-green-500">Chosen ${cnt} / ${max}</span>`;
+    if(cnt===max) return `<span class="text-sm text-yellow-500">Chosen ${cnt} / ${max} (full)</span>`;
+    return `<span class="text-sm text-red-500">Over by ${cnt-max}</span>`;
+  }
+
+  function renderLists(){
+    const cC=document.getElementById('considering');
+    const cH=document.getElementById('chosen');
+    const considering=JSON.parse(localStorage.getItem(PK_CONSIDERING)||'[]');
+    const chosen=JSON.parse(localStorage.getItem(PK_CHOSEN)||'[]');
+
+    function card(it,list){
+      return `
+      <div class="flex items-center justify-between p-3 rounded-lg bg-slate-800 border border-slate-700 mb-2">
+        <div class="flex-1 min-w-0">
+          <h3 class="font-medium text-lg text-gray-100">${it.title}</h3>
+          <p class="text-xs text-gray-400 mb-1">${it.category} • ${it.school}</p>
+          <p class="text-sm text-gray-300 break-words whitespace-pre-wrap">${it.notes||''}</p>
+        </div>
+        <div class="flex-shrink-0 ml-4">
+          ${list==='considering'?`<button class="p-2 ml-2 rounded-full bg-indigo-600 hover:bg-indigo-700 text-white" data-action="choose" data-id="${it.id}">✔</button>`:''}
+          <button class="p-2 rounded-full bg-red-600 hover:bg-red-700 text-white" data-action="remove" data-id="${it.id}" data-list="${list}">✕</button>
+        </div>
+      </div>`;
     }
 
-    /* ===== Elective Planner ===== */
-    (function(){
-        const PK_CONSIDERING='electives_considering_v3';
-        const PK_CHOSEN='electives_chosen_v3';
+    cC.innerHTML = considering.map(it=>card(it,'considering')).join('');
+    const grouped = chosen.reduce((a,c)=>{ (a[c.school]=a[c.school]||[]).push(c); return a; },{});
+    cH.innerHTML = Object.keys(grouped).sort().map(s=>{
+      const header = `
+      <div class="flex justify-between items-center bg-slate-900 border border-slate-700 p-3 rounded-lg mb-2 mt-4">
+        <h4 class="font-semibold text-gray-200">${s}</h4>${softLimitLabel(s, JSON.parse(localStorage.getItem(PK_CHOSEN)||'[]'))}
+      </div>`;
+      return header + grouped[s].map(it=>card(it,'chosen')).join('');
+    }).join('');
+  }
 
-        function countsForSchool(name, chosen){
-            return chosen.filter(x=>x.school===name).length;
+  function handleClick(e){
+    const btn=e.target.closest('button'); if(!btn) return;
+    const action=btn.dataset.action; const id=btn.dataset.id; const list=btn.dataset.list;
+    const considering=JSON.parse(localStorage.getItem(PK_CONSIDERING)||'[]');
+    const chosen=JSON.parse(localStorage.getItem(PK_CHOSEN)||'[]');
+    let item = (list==='considering'? considering.find(x=>x.id===id) : chosen.find(x=>x.id===id));
+    if(!item) return;
+    if(action==='choose'){
+      localStorage.setItem(PK_CONSIDERING, JSON.stringify(considering.filter(x=>x.id!==id)));
+      localStorage.setItem(PK_CHOSEN, JSON.stringify([...chosen, item]));
+    } else if(action==='remove'){
+      if(list==='considering') localStorage.setItem(PK_CONSIDERING, JSON.stringify(considering.filter(x=>x.id!==id)));
+      else localStorage.setItem(PK_CHOSEN, JSON.stringify(chosen.filter(x=>x.id!==id)));
+    }
+    renderLists();
+  }
+
+  function addElective(){
+    const school=document.getElementById('pl-school').value;
+    const category=document.getElementById('pl-category').value.trim();
+    const title=document.getElementById('pl-title').value.trim();
+    const notes=document.getElementById('pl-notes').value.trim();
+    if(!school||!category||!title) return;
+    const entry={id:crypto.randomUUID(), school, category, title, notes};
+    const considering=JSON.parse(localStorage.getItem(PK_CONSIDERING)||'[]');
+    localStorage.setItem(PK_CONSIDERING, JSON.stringify([...considering, entry]));
+    document.getElementById('pl-category').value='';
+    document.getElementById('pl-title').value='';
+    document.getElementById('pl-notes').value='';
+    renderLists();
+  }
+
+  function refreshPlannerSchoolOptions(){
+    const sel=document.getElementById('pl-school');
+    const schools=getSchoolNames(); const current=sel.value;
+    sel.innerHTML=''; schools.forEach(s=>{ const o=document.createElement('option'); o.value=s; o.textContent=s; if(s===current) o.selected=true; sel.appendChild(o); });
+  }
+
+  function exportPlannerJSON(){
+    const data={ considering:JSON.parse(localStorage.getItem(PK_CONSIDERING)||'[]'), chosen:JSON.parse(localStorage.getItem(PK_CHOSEN)||'[]') };
+    const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}), url=URL.createObjectURL(blob);
+    const a=document.createElement('a'); a.href=url; a.download='MBA_Elective_Planner.json'; a.click(); URL.revokeObjectURL(url);
+  }
+
+  function importPlannerJSON(e){
+    const file=e.target.files[0]; if(!file) return;
+    const r=new FileReader(); r.onload=ev=>{
+      try{ const data=JSON.parse(ev.target.result);
+        if(data.considering && data.chosen){
+          localStorage.setItem(PK_CONSIDERING, JSON.stringify(data.considering));
+          localStorage.setItem(PK_CHOSEN, JSON.stringify(data.chosen));
+          renderLists();
         }
-        function softLimitLabel(name, chosen){
-            const max=getMaxForSchool(name);
-            const cnt=countsForSchool(name, chosen);
-            if(max==null) return `<span class="text-sm text-gray-400">Max: —</span>`;
-            if(cnt<max) return `<span class="text-sm text-green-500">Chosen ${cnt} / ${max}</span>`;
-            if(cnt===max) return `<span class="text-sm text-yellow-500">Chosen ${cnt} / ${max} (full)</span>`;
-            return `<span class="text-sm text-red-500">Over by ${cnt-max}</span>`;
-        }
+      }catch(_){}
+    }; r.readAsText(file);
+  }
 
-        function renderLists(){
-            const ctnC=document.getElementById('considering');
-            const ctnH=document.getElementById('chosen');
-            const considering=JSON.parse(localStorage.getItem(PK_CONSIDERING)||'[]');
-            const chosen=JSON.parse(localStorage.getItem(PK_CHOSEN)||'[]');
+  function clearPlanner(){ localStorage.removeItem(PK_CONSIDERING); localStorage.removeItem(PK_CHOSEN); renderLists(); }
 
-            function card(it, list){
-                return `
-                    <div class="flex items-center justify-between p-3 rounded-lg bg-slate-800 border border-slate-700 mb-2 card">
-                        <div class="flex-1 min-w-0">
-                            <h3 class="font-medium text-lg text-gray-100">${it.title}</h3>
-                            <p class="text-xs text-gray-400 mb-1">${it.category} • ${it.school}</p>
-                            <p class="text-sm text-gray-300 break-words whitespace-pre-wrap">${it.notes}</p>
-                        </div>
-                        <div class="flex-shrink-0 ml-4">
-                            ${list==='considering' ? `<button class="p-2 ml-2 rounded-full bg-indigo-600 hover:bg-indigo-700 text-white" data-action="choose" data-id="${it.id}" aria-label="Choose elective">✔</button>` : ''}
-                            <button class="p-2 rounded-full bg-red-600 hover:bg-red-700 text-white" data-action="remove" data-id="${it.id}" data-list="${list}" aria-label="Remove elective">✕</button>
-                        </div>
-                    </div>
-                `;
-            }
+  document.addEventListener('DOMContentLoaded', ()=>{
+    document.getElementById('considering').addEventListener('click', handleClick);
+    document.getElementById('chosen').addEventListener('click', handleClick);
+    document.getElementById('pl-add').addEventListener('click', addElective);
+    document.getElementById('export-planner').addEventListener('click', exportPlannerJSON);
+    document.getElementById('import-json').addEventListener('change', importPlannerJSON);
+    document.getElementById('clear-planner').addEventListener('click', clearPlanner);
+    renderLists(); refreshPlannerSchoolOptions();
+  });
 
-            ctnC.innerHTML = considering.map(it=>card(it,'considering')).join('');
-            
-            const groupedChosen = chosen.reduce((acc, curr) => {
-                (acc[curr.school] = acc[curr.school] || []).push(curr);
-                return acc;
-            }, {});
+  window.refreshPlannerSchoolOptions = refreshPlannerSchoolOptions;
+})();
 
-            ctnH.innerHTML = Object.keys(groupedChosen).sort().map(school => {
-                const max = getMaxForSchool(school);
-                const count = groupedChosen[school].length;
-                const header = `
-                    <div class="flex justify-between items-center bg-slate-900 border border-slate-700 p-3 rounded-lg mb-2 mt-4">
-                        <h4 class="font-semibold text-gray-200">${school}</h4>
-                        ${softLimitLabel(school, chosen)}
-                    </div>
-                `;
-                const cards = groupedChosen[school].map(it => card(it, 'chosen')).join('');
-                return header + cards;
-            }).join('');
-        }
-        
-        function handlePlannerClick(e){
-            const btn = e.target.closest('button'); if(!btn) return;
-            const action=btn.dataset.action; const id=btn.dataset.id; const list=btn.dataset.list;
-            const considering=JSON.parse(localStorage.getItem(PK_CONSIDERING)||'[]');
-            const chosen=JSON.parse(localStorage.getItem(PK_CHOSEN)||'[]');
-            let item;
+/* ---------- Essay Questions ---------- */
+(function(){
+  const KEY='mba_essay_questions';
+  const list=document.getElementById('eq-list');
 
-            if(list==='considering'){ item=considering.find(it=>it.id===id); if(!item) return; }
-            else if(list==='chosen'){ item=chosen.find(it=>it.id===id); if(!item) return; }
+  function saveEQ(q){ localStorage.setItem(KEY, JSON.stringify(q)); }
+  function loadEQ(){ try{ return JSON.parse(localStorage.getItem(KEY))||[]; }catch(_){ return []; } }
 
-            if(action==='choose'){
-                localStorage.setItem(PK_CONSIDERING, JSON.stringify(considering.filter(it=>it.id!==id)));
-                localStorage.setItem(PK_CHOSEN, JSON.stringify([...chosen, item]));
-            } else if(action==='remove'){
-                if(list==='considering'){
-                    localStorage.setItem(PK_CONSIDERING, JSON.stringify(considering.filter(it=>it.id!==id)));
-                } else if(list==='chosen'){
-                    localStorage.setItem(PK_CHOSEN, JSON.stringify(chosen.filter(it=>it.id!==id)));
-                }
-            }
-            renderLists();
-        }
+  function renderEQ(){
+    const qs=loadEQ(); list.innerHTML='';
+    qs.forEach(q=>{
+      const card=document.createElement('div');
+      card.className='bg-slate-900 border border-slate-700 rounded-xl p-4 flex flex-col justify-between';
+      card.innerHTML=`
+        <div>
+          <h4 class="font-bold text-lg text-white mb-2">${q.school}</h4>
+          <div class="flex flex-wrap gap-2 text-sm text-gray-400 mb-2">
+            <span class="pill">${q.type}</span>
+            ${q.wordlimit?`<span class="pill">${q.wordlimit} words</span>`:''}
+            ${q.deadline?`<span class="pill">Deadline: ${q.deadline}</span>`:''}
+          </div>
+          <p class="text-gray-300 font-medium my-2">${q.question}</p>
+          <p class="text-sm text-gray-400 mt-2"><b>Theme:</b> ${q.theme||''}</p>
+          <p class="text-sm text-gray-400"><b>Notes:</b> ${q.notes||''}</p>
+        </div>
+        <div class="mt-4 flex gap-2">
+          <button class="flex-1 bg-red-600 hover:bg-red-700 text-white font-medium px-3 py-1 rounded-lg text-sm" data-action="delete" data-id="${q.id}">Delete</button>
+          <button class="flex-1 bg-teal-600 hover:bg-teal-700 text-white font-medium px-3 py-1 rounded-lg text-sm" data-action="copy" data-text="${encodeURIComponent(q.question)}">Copy Text</button>
+        </div>`;
+      list.appendChild(card);
+    });
+  }
 
-        function addElective(){
-            const school = document.getElementById('pl-school').value;
-            const category = document.getElementById('pl-category').value.trim();
-            const title = document.getElementById('pl-title').value.trim();
-            const notes = document.getElementById('pl-notes').value.trim();
-            if(!school || !category || !title) return;
-            
-            const newEntry = {id: crypto.randomUUID(), school, category, title, notes};
-            const considering = JSON.parse(localStorage.getItem(PK_CONSIDERING)||'[]');
-            localStorage.setItem(PK_CONSIDERING, JSON.stringify([...considering, newEntry]));
-            
-            document.getElementById('pl-category').value = '';
-            document.getElementById('pl-title').value = '';
-            document.getElementById('pl-notes').value = '';
-            renderLists();
-        }
+  function addEQ(){
+    const school=document.getElementById('eq-school').value;
+    const type=document.getElementById('eq-type').value;
+    const wordlimit=document.getElementById('eq-wordlimit').value;
+    const deadline=document.getElementById('eq-deadline').value;
+    const theme=document.getElementById('eq-theme').value.trim();
+    const notes=document.getElementById('eq-notes').value.trim();
+    const question=document.getElementById('eq-question').value.trim();
+    if(!school || !question) return;
+    const qs=loadEQ();
+    qs.push({id:crypto.randomUUID(), school, type, wordlimit, deadline, theme, notes, question});
+    saveEQ(qs);
+    document.getElementById('eq-theme').value='';
+    document.getElementById('eq-notes').value='';
+    document.getElementById('eq-question').value='';
+    renderEQ();
+  }
 
-        function refreshPlannerSchoolOptions(){
-            const select=document.getElementById('pl-school');
-            const schools = getSchoolNames();
-            const currentSelected = select.value;
-            select.innerHTML = '';
-            schools.forEach(s=>{
-                const opt=document.createElement('option'); opt.value=s; opt.innerText=s;
-                if(s===currentSelected) opt.selected=true;
-                select.appendChild(opt);
-            });
-        }
-        
-        function exportPlannerJSON(){
-            const data={
-                considering: JSON.parse(localStorage.getItem(PK_CONSIDERING)||'[]'),
-                chosen: JSON.parse(localStorage.getItem(PK_CHOSEN)||'[]')
-            };
-            const json=JSON.stringify(data, null, 2);
-            const blob=new Blob([json], {type:'application/json'});
-            const url=URL.createObjectURL(blob);
-            const a=document.createElement('a'); a.href=url; a.download='MBA_Elective_Planner.json'; a.click(); URL.revokeObjectURL(url);
-        }
+  function handleListClick(e){
+    const btn=e.target.closest('button'); if(!btn) return;
+    const action=btn.dataset.action;
+    if(action==='delete'){
+      const id=btn.dataset.id; saveEQ(loadEQ().filter(x=>x.id!==id)); renderEQ();
+    } else if(action==='copy'){
+      const text=decodeURIComponent(btn.dataset.text);
+      const ta=document.createElement('textarea'); ta.value=text; document.body.appendChild(ta);
+      ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
+    }
+  }
 
-        function importPlannerJSON(e){
-            const file = e.target.files[0];
-            if(!file) return;
-            const reader = new FileReader();
-            reader.onload = function(event){
-                try{
-                    const data=JSON.parse(event.target.result);
-                    if(data.considering && data.chosen){
-                        localStorage.setItem(PK_CONSIDERING, JSON.stringify(data.considering));
-                        localStorage.setItem(PK_CHOSEN, JSON.stringify(data.chosen));
-                        renderLists();
-                        // TODO: Add a success message
-                    } else {
-                        // TODO: Add an error message
-                    }
-                } catch(err){
-                    // TODO: Add an error message
-                }
-            };
-            reader.readAsText(file);
-        }
+  function populateEssaySchoolSelect(){
+    const sel=document.getElementById('eq-school');
+    const schools=getSchoolNames(); const current=sel.value;
+    sel.innerHTML=''; schools.forEach(s=>{ const o=document.createElement('option'); o.value=s; o.textContent=s; if(s===current) o.selected=true; sel.appendChild(o); });
+  }
 
-        function clearPlanner(){
-            localStorage.removeItem(PK_CONSIDERING);
-            localStorage.removeItem(PK_CHOSEN);
-            renderLists();
-        }
+  function exportEQ(){
+    const blob=new Blob([JSON.stringify(loadEQ(),null,2)],{type:'application/json'});
+    const url=URL.createObjectURL(blob); const a=document.createElement('a');
+    a.href=url; a.download='MBA_Essay_Questions.json'; a.click(); URL.revokeObjectURL(url);
+  }
+  function importEQ(e){
+    const file=e.target.files[0]; if(!file) return;
+    const r=new FileReader(); r.onload=ev=>{
+      try{ const arr=JSON.parse(ev.target.result); if(Array.isArray(arr)){ saveEQ(arr); renderEQ(); } }catch(_){}
+    }; r.readAsText(file);
+  }
+  function clearEQ(){ saveEQ([]); renderEQ(); }
 
-        document.addEventListener('DOMContentLoaded', ()=>{
-            document.getElementById('considering').addEventListener('click', handlePlannerClick);
-            document.getElementById('chosen').addEventListener('click', handlePlannerClick);
-            document.getElementById('pl-add').addEventListener('click', addElective);
-            document.getElementById('export-planner').addEventListener('click', exportPlannerJSON);
-            document.getElementById('import-json').addEventListener('change', importPlannerJSON);
-            document.getElementById('clear-planner').addEventListener('click', clearPlanner);
-            renderLists();
-        });
+  document.addEventListener('DOMContentLoaded', ()=>{
+    document.getElementById('eq-add').addEventListener('click', addEQ);
+    document.getElementById('eq-list').addEventListener('click', handleListClick);
+    document.getElementById('eq-export').addEventListener('click', exportEQ);
+    document.getElementById('eq-import').addEventListener('change', importEQ);
+    document.getElementById('eq-clear').addEventListener('click', clearEQ);
+    renderEQ(); populateEssaySchoolSelect();
+  });
 
-        // Make refreshPlannerSchoolOptions globally accessible for the CRM autosave
-        window.refreshPlannerSchoolOptions = refreshPlannerSchoolOptions;
-    })();
-
-    /* ===== Essay Questions ===== */
-    (function(){
-        const KEY = 'mba_essay_questions';
-        const listContainer = document.getElementById('eq-list');
-
-        function saveEQ(questions) {
-            localStorage.setItem(KEY, JSON.stringify(questions));
-        }
-
-        function loadEQ() {
-            try {
-                return JSON.parse(localStorage.getItem(KEY)) || [];
-            } catch (e) {
-                console.error("Error loading essay questions from localStorage", e);
-                return [];
-            }
-        }
-
-        function renderEQ() {
-            const questions = loadEQ();
-            listContainer.innerHTML = '';
-            questions.forEach(q => {
-                const card = document.createElement('div');
-                card.className = 'bg-slate-900 border border-slate-700 rounded-xl p-4 flex flex-col justify-between';
-                card.innerHTML = `
-                    <div>
-                        <h4 class="font-bold text-lg text-white mb-2">${q.school}</h4>
-                        <div class="flex flex-wrap gap-2 text-sm text-gray-400 mb-2">
-                            <span class="pill">${q.type}</span>
-                            ${q.wordlimit ? `<span class="pill">${q.wordlimit} words</span>` : ''}
-                            ${q.deadline ? `<span class="pill">Deadline: ${q.deadline}</span>` : ''}
-                        </div>
-                        <p class="text-gray-300 font-medium my-2">${q.question}</p>
-                        <p class="text-sm text-gray-400 mt-2"><b>Theme:</b> ${q.theme}</p>
-                        <p class="text-sm text-gray-400"><b>Notes:</b> ${q.notes}</p>
-                    </div>
-                    <div class="mt-4 flex gap-2">
-                        <button class="flex-1 bg-red-600 hover:bg-red-700 text-white font-medium px-3 py-1 rounded-lg transition-colors duration-200 text-sm" data-action="delete" data-id="${q.id}">Delete</button>
-                        <button class="flex-1 bg-teal-600 hover:bg-teal-700 text-white font-medium px-3 py-1 rounded-lg transition-colors duration-200 text-sm" data-action="copy-text" data-text="${encodeURIComponent(q.question)}">Copy Text</button>
-                    </div>
-                `;
-                listContainer.appendChild(card);
-            });
-        }
-
-        function addEQ() {
-            const school = document.getElementById('eq-school').value;
-            const type = document.getElementById('eq-type').value;
-            const wordlimit = document.getElementById('eq-wordlimit').value;
-            const deadline = document.getElementById('eq-deadline').value;
-            const theme = document.getElementById('eq-theme').value.trim();
-            const notes = document.getElementById('eq-notes').value.trim();
-            const question = document.getElementById('eq-question').value.trim();
-
-            if (!school || !question) {
-                // TODO: Show a custom error message
-                return;
-            }
-
-            const newQuestion = {
-                id: crypto.randomUUID(), school, type, wordlimit, deadline, theme, notes, question
-            };
-            const questions = loadEQ();
-            saveEQ([...questions, newQuestion]);
-
-            // Clear inputs
-            document.getElementById('eq-theme').value = '';
-            document.getElementById('eq-notes').value = '';
-            document.getElementById('eq-question').value = '';
-
-            renderEQ();
-        }
-
-        function handleListClick(e) {
-            const btn = e.target.closest('button');
-            if (!btn) return;
-            const action = btn.dataset.action;
-            const id = btn.dataset.id;
-            
-            if (action === 'delete') {
-                const questions = loadEQ();
-                saveEQ(questions.filter(q => q.id !== id));
-                renderEQ();
-            } else if (action === 'copy-text') {
-                const textToCopy = decodeURIComponent(btn.dataset.text);
-                const tempInput = document.createElement('textarea');
-                tempInput.value = textToCopy;
-                document.body.appendChild(tempInput);
-                tempInput.select();
-                document.execCommand('copy');
-                document.body.removeChild(tempInput);
-                
-                // TODO: Add a custom alert/toast
-            }
-        }
-        
-        function populateEssaySchoolSelect(){
-            const select=document.getElementById('eq-school');
-            const schools = getSchoolNames();
-            const currentSelected = select.value;
-            select.innerHTML = '';
-            schools.forEach(s=>{
-                const opt=document.createElement('option'); opt.value=s; opt.innerText=s;
-                if(s===currentSelected) opt.selected=true;
-                select.appendChild(opt);
-            });
-        }
-
-        function exportEQJSON(){
-            const data=loadEQ();
-            const json=JSON.stringify(data, null, 2);
-            const blob=new Blob([json], {type:'application/json'});
-            const url=URL.createObjectURL(blob);
-            const a=document.createElement('a'); a.href=url; a.download='MBA_Essay_Questions.json'; a.click(); URL.revokeObjectURL(url);
-        }
-
-        function importEQJSON(e){
-            const file = e.target.files[0];
-            if(!file) return;
-            const reader = new FileReader();
-            reader.onload = function(event){
-                try{
-                    const data=JSON.parse(event.target.result);
-                    if(Array.isArray(data)){
-                        saveEQ(data);
-                        renderEQ();
-                        // TODO: Add a success message
-                    } else {
-                        // TODO: Add an error message
-                    }
-                } catch(err){
-                    // TODO: Add an error message
-                }
-            };
-            reader.readAsText(file);
-        }
-
-        function clearEQ(){
-            saveEQ([]);
-            renderEQ();
-        }
-
-        document.addEventListener('DOMContentLoaded', ()=>{
-            document.getElementById('eq-add').addEventListener('click', addEQ);
-            document.getElementById('eq-list').addEventListener('click', handleListClick);
-            document.getElementById('eq-export').addEventListener('click', exportEQJSON);
-            document.getElementById('eq-import').addEventListener('change', importEQJSON);
-            document.getElementById('eq-clear').addEventListener('click', clearEQ);
-            renderEQ();
-        });
-        
-        window.populateEssaySchoolSelect = populateEssaySchoolSelect;
-    })();
+  window.populateEssaySchoolSelect = populateEssaySchoolSelect;
+})();
 </script>
-
 </body>
 </html>
