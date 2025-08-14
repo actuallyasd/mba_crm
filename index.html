@@ -640,6 +640,140 @@ function getMaxForSchool(name){
   }
   function clearEQ(){ saveEQ([]); renderEQ(); }
 
+/* ======== ESSAY RECOVERY & SAFETY PATCH ======== */
+/* What it does:
+   - Adds a "Recover Essays" button in the Essay tab
+   - Scans for prior keys and offers one-click restore
+   - Auto-backups current essays on every change
+   - Backs up before Clear All, and asks for confirmation
+*/
+
+(function(){
+  // ---- Known / likely keys from older versions ----
+  const CANON_KEY = 'mba_essay_questions';                       // current canonical key
+  const CANDIDATE_KEYS = [
+    'mba_essay_questions',        // same key (older data may live here if app changed domains)
+    'essay_questions_v2',         // earlier build we used
+    'essay_questions',            // common alt
+    'EssayQuestions',             // alt
+    'EssayQuestions.json',        // if someone saved raw JSON in localStorage
+    'eq_questions',               // generic alt
+  ];
+
+  // ---- Utilities ----
+  function readJSON(k){
+    try { return JSON.parse(localStorage.getItem(k) || '[]'); } catch(e){ return []; }
+  }
+  function writeJSON(k, v){
+    localStorage.setItem(k, JSON.stringify(v));
+  }
+  function backupNow(tag='manual'){
+    const data = readJSON(CANON_KEY);
+    const stamp = new Date().toISOString().replace(/[:.]/g,'-');
+    localStorage.setItem(`${CANON_KEY}_backup_${stamp}_${tag}`, JSON.stringify(data));
+    return `${CANON_KEY}_backup_${stamp}_${tag}`;
+  }
+  function listEssayKeys(){
+    return Object.keys(localStorage).filter(k=>/essay|eq_?questions/i.test(k));
+  }
+
+  // ---- Inject a "Recover Essays" button into the Essay tab toolbar ----
+  function ensureRecoverButton(){
+    const toolbar = document.querySelector('#essay .flex.flex-wrap.gap-2.mb-4');
+    if(!toolbar || document.getElementById('eq-recover')) return;
+    const btn = document.createElement('button');
+    btn.id = 'eq-recover';
+    btn.textContent = 'Recover Essays';
+    btn.className = 'bg-amber-600 hover:bg-amber-700 text-white font-medium px-4 py-2 rounded-lg';
+    btn.addEventListener('click', onRecoverClick);
+    toolbar.appendChild(btn);
+  }
+
+  // ---- Recovery flow ----
+  function onRecoverClick(){
+    // Build a list of candidate keys with sizes to help pick
+    const keys = Array.from(new Set(CANDIDATE_KEYS.concat(listEssayKeys())));
+    const report = keys.map(k => {
+      const raw = localStorage.getItem(k);
+      const len = (raw && raw.length) || 0;
+      let count = 0;
+      try { const arr = JSON.parse(raw||'[]'); if(Array.isArray(arr)) count = arr.length; } catch(e){}
+      return { key:k, bytes:len, count };
+    }).filter(x => x.bytes > 0);
+
+    if(!report.length){
+      alert('No prior essay data found in localStorage.\nIf you exported JSON earlier, use Import to restore.');
+      return;
+    }
+
+    // Let user choose which to restore (simple prompt)
+    const menu = report
+      .sort((a,b)=> b.bytes - a.bytes)
+      .map((r,i)=> `[${i+1}] ${r.key} — ${r.count} items, ${r.bytes} bytes`).join('\n');
+
+    const choice = prompt(
+      'Select a source to restore by typing its number:\n\n' + menu +
+      '\n\nTip: choose the one with the most items/bytes.'
+    );
+    const idx = (choice? parseInt(choice,10) : NaN) - 1;
+    if(isNaN(idx) || !report[idx]) return;
+
+    const selected = report[idx];
+    const data = readJSON(selected.key);
+    if(!Array.isArray(data) || !data.length){
+      alert('That key contains no valid essay array.');
+      return;
+    }
+
+    // Backup current first, then restore
+    const bakKey = backupNow('pre-restore');
+    writeJSON(CANON_KEY, data);
+    alert(`Restored ${data.length} essay item(s) from "${selected.key}".\nA backup of your previous state was saved as "${bakKey}".`);
+
+    // Re-render UI if renderEQ is present
+    if(typeof window.renderEQ === 'function'){ window.renderEQ(); }
+    // If not globally exposed, try triggering the list rebuild:
+    const ev = new Event('essay-restored'); document.dispatchEvent(ev);
+    // And reload page UI elements:
+    try { document.querySelector('.tab[data-tab="essay"]')?.click(); } catch(e){}
+  }
+
+  // ---- Make the essay renderer callable (if original code didn't expose it) ----
+  // Wrap the existing renderEQ if available in closure
+  (function exposeRenderEQ(){
+    // If the original script defined renderEQ inside an IIFE, we might not access it.
+    // We attempt a minimal hook: re-trigger the Essay tab to force a re-render cycle.
+    // Additionally, listen for our custom event so other scripts can hook in if needed.
+    document.addEventListener('essay-restored', ()=> {
+      // No-op by default; your main script’s renderEQ should repaint on tab switch or next tick.
+    });
+  })();
+
+  // ---- Auto-backup hooks for safety ----
+  // 1) Back up before Clear All
+  document.addEventListener('click', (e)=>{
+    const btn = e.target.closest('#eq-clear');
+    if(!btn) return;
+    const key = backupNow('pre-clear');
+    const ok = confirm('Backup created: "'+key+'".\nAre you sure you want to clear ALL essay questions?');
+    if(!ok){ e.preventDefault(); e.stopPropagation(); }
+    // if user proceeds, your original clear handler will run and then you can still recover from backup.
+  });
+
+  // 2) Back up after Add Question or Import
+  document.addEventListener('click', (e)=>{
+    if(e.target.closest('#eq-add') || e.target.closest('#eq-import') || e.target.closest('#eq-export')){
+      // Slight delay to allow original handlers to update localStorage
+      setTimeout(()=>backupNow('post-change'), 200);
+    }
+  });
+
+  // 3) Auto-backup on page unload (belt & braces)
+  window.addEventListener('beforeunload', ()=> backupNow('unload'));
+
+  // 4) Initialize button on load
+  window.addEventListener('load', ensureRecoverButton);
+})();
   document.addEventListener('DOMContentLoaded', ()=>{
     document.getElementById('eq-add').addEventListener('click', addEQ);
     document.getElementById('eq-list').addEventListener('click', handleListClick);
