@@ -786,5 +786,23 @@ function getMaxForSchool(name){
   window.populateEssaySchoolSelect = populateEssaySchoolSelect;
 })();
 </script>
+  <script>
+  // === TEMPORARY ESSAY RESTORE SNIPPET ===
+  (function(){
+    const recoveredData = [
+      {id: 1755011135402, school: "IESE Business School", type: "Required essay", wordlimit: "300", deadline: "", question: ""},
+      {id: 1755011172674, school: "IESE Business School", type: "Optional essay", wordlimit: "300", deadline: "", question: ""},
+      // ... rest of your recovered objects
+    ];
+
+    if (Array.isArray(recoveredData) && recoveredData.length > 0) {
+      localStorage.setItem('mba_essay_questions', JSON.stringify(recoveredData));
+      localStorage.setItem('essay_questions_v2', JSON.stringify(recoveredData));
+      console.log(`✅ Restored ${recoveredData.length} essays into localStorage.`);
+    } else {
+      console.warn('⚠️ No valid recovered data found to restore.');
+    }
+  })();
+  </script>
 </body>
 </html>
